@@ -1,0 +1,44 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build_and_deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build 'common'
+        working-directory: ./common
+        run: |
+          npm install
+          npm run build
+      - name: Testing 'common'
+        run: |
+          npm run test
+      - name: Build 'geolocationapi'
+        working-directory: ./geolocationapi
+        run: |
+          npm install
+          npm run build
+      - name: Build 'qrscanner'
+        working-directory: ./qrscanner
+        run: |
+          npm install
+          npm run build
+      - name: Prepare deployment
+        run: |
+          mkdir ./_site
+          mkdir ./_site/qrscanner
+          mkdir ./_site/geolocationapi
+          cp ./qrscanner/dist ./_site/qrscanner
+          cp ./geolocationapi/dist ./_site/geolocationapi
+          cp ./common/dist/tracking.ttl ./_site/tracking.ttl
+      - name: Deploy site to GitHub
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./_site

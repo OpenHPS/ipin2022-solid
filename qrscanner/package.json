@@ -1,0 +1,74 @@
+{
+  "name": "ipin2022-qrscanner",
+  "version": "0.1.0",
+  "private": true,
+  "author": "Maxim Van de Wynckel",
+  "scripts": {
+    "serve": "vue-cli-service serve",
+    "build": "vue-cli-service build",
+    "build:dev": "vue-cli-service build --mode development",
+    "lint": "vue-cli-service lint",
+    "generate": "ts-node ./src/bin/generate.ts"
+  },
+  "dependencies": {
+    "buefy": "^0.9.4",
+    "core-js": "^3.6.5",
+    "ipin2022-common": "file:../common/",
+    "reflect-metadata": "^0.1.13",
+    "vue": "^2.6.11",
+    "vue-class-component": "^7.2.6",
+    "vue-property-decorator": "^9.1.2",
+    "vue-qrcode-reader": "^3.1.0"
+  },
+  "devDependencies": {
+    "@babel/plugin-proposal-decorators": "^7.17.8",
+    "@openhps/core": "^0.3.25",
+    "@openhps/geospatial": "^0.1.6",
+    "@types/ejs": "^3.1.0",
+    "@types/html-pdf": "^3.0.0",
+    "@types/qr-image": "^3.2.5",
+    "@typescript-eslint/eslint-plugin": "^5.17.0",
+    "@typescript-eslint/parser": "^5.17.0",
+    "@vue/cli-plugin-babel": "~5.0.4",
+    "@vue/cli-plugin-eslint": "~5.0.4",
+    "@vue/cli-plugin-typescript": "~5.0.4",
+    "@vue/cli-service": "~5.0.4",
+    "@vue/compiler-sfc": "^3.2.31",
+    "@vue/eslint-config-typescript": "^10.0.0",
+    "babel-eslint": "^10.1.0",
+    "ejs": "^3.1.6",
+    "eslint": "^8.12.0",
+    "eslint-plugin-vue": "^8.5.0",
+    "html-pdf": "^3.0.1",
+    "json-loader": "^0.5.7",
+    "node-polyfill-webpack-plugin": "^1.1.4",
+    "qr-image": "^3.2.0",
+    "sass": "^1.49.10",
+    "sass-loader": "^12.6.0",
+    "ts-node": "^10.7.0",
+    "typescript": "~4.4.0",
+    "vue-template-compiler": "^2.6.14"
+  },
+  "eslintConfig": {
+    "root": true,
+    "env": {
+      "node": true
+    },
+    "extends": [
+      "plugin:vue/essential",
+      "eslint:recommended",
+      "@vue/typescript/recommended"
+    ],
+    "parserOptions": {
+      "parser": "@typescript-eslint/parser"
+    },
+    "rules": {
+      "@typescript-eslint/ban-types": "off"
+    }
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead"
+  ]
+}
