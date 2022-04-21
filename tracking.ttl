@@ -1,9 +1,15 @@
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>.
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+@prefix ssn: <http://www.w3.org/ns/ssn/>.
 @prefix ogc: <http://www.opengis.net/ont/geosparql#>.
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#>.
 
-<http://example.com/tracking.ttl#deployment_pl9_3_lobby_1> a <http://www.w3.org/ns/ssn/Deployment>, ogc:SpatialObject;
+<http://openhps.github.io/ipin2022-solid/tracking.ttl#system_outdoor> a ssn:System;
+    rdfs:label "Outdoor positioning system"@en;
+    ssn:implements <http://openhps.github.io/ipin2022-solid/tracking.ttl#geolocationapi>.
+<http://openhps.github.io/ipin2022-solid/tracking.ttl#geolocationapi> a ssn:System;
+    rdfs:label "Geolocation API"@en.
+<http://openhps.github.io/ipin2022-solid/tracking.ttl#deployment_pl9_3_lobby_1> a ssn:Deployment, ogc:SpatialObject;
     rdfs:label "Lobby #1"@en;
     ogc:hasGeometry [
   a ogc:Geometry;
@@ -12,8 +18,8 @@
   ogc:spatialDimension 3;
   ogc:dimension 3
 ];
-    ogc:sfWithin "http://example.com/tracking.ttl#deployment_pl9_3".
-<http://example.com/tracking.ttl#deployment_pl9_3_lobby_2> a <http://www.w3.org/ns/ssn/Deployment>, ogc:SpatialObject;
+    ogc:sfWithin "http://openhps.github.io/ipin2022-solid/tracking.ttl#deployment_pl9_3".
+<http://openhps.github.io/ipin2022-solid/tracking.ttl#deployment_pl9_3_lobby_2> a ssn:Deployment, ogc:SpatialObject;
     rdfs:label "Lobby #2"@en;
     ogc:hasGeometry [
   a ogc:Geometry;
@@ -22,8 +28,8 @@
   ogc:spatialDimension 3;
   ogc:dimension 3
 ];
-    ogc:sfWithin "http://example.com/tracking.ttl#deployment_pl9_3".
-<http://example.com/tracking.ttl#deployment_pl9_3_corridor> a <http://www.w3.org/ns/ssn/Deployment>, ogc:SpatialObject;
+    ogc:sfWithin "http://openhps.github.io/ipin2022-solid/tracking.ttl#deployment_pl9_3".
+<http://openhps.github.io/ipin2022-solid/tracking.ttl#deployment_pl9_3_corridor> a ssn:Deployment, ogc:SpatialObject;
     rdfs:label "Corridor"@en;
     ogc:hasGeometry [
   a ogc:Geometry;
@@ -32,8 +38,8 @@
   ogc:spatialDimension 3;
   ogc:dimension 3
 ];
-    ogc:sfWithin "http://example.com/tracking.ttl#deployment_pl9_3".
-<http://example.com/tracking.ttl#deployment_pl9_3_62> a <http://www.w3.org/ns/ssn/Deployment>, ogc:SpatialObject;
+    ogc:sfWithin "http://openhps.github.io/ipin2022-solid/tracking.ttl#deployment_pl9_3".
+<http://openhps.github.io/ipin2022-solid/tracking.ttl#deployment_pl9_3_62> a ssn:Deployment, ogc:SpatialObject;
     rdfs:label "PL9.3.62"@en;
     ogc:hasGeometry [
   a ogc:Geometry;
@@ -42,8 +48,8 @@
   ogc:spatialDimension 3;
   ogc:dimension 3
 ];
-    ogc:sfWithin "http://example.com/tracking.ttl#deployment_pl9_3".
-<http://example.com/tracking.ttl#deployment_pl9_3_60> a <http://www.w3.org/ns/ssn/Deployment>, ogc:SpatialObject;
+    ogc:sfWithin "http://openhps.github.io/ipin2022-solid/tracking.ttl#deployment_pl9_3".
+<http://openhps.github.io/ipin2022-solid/tracking.ttl#deployment_pl9_3_60> a ssn:Deployment, ogc:SpatialObject;
     rdfs:label "PL9.3.60"@en;
     ogc:hasGeometry [
   a ogc:Geometry;
@@ -52,8 +58,8 @@
   ogc:spatialDimension 3;
   ogc:dimension 3
 ];
-    ogc:sfWithin "http://example.com/tracking.ttl#deployment_pl9_3".
-<http://example.com/tracking.ttl#deployment_pl9_3_58> a <http://www.w3.org/ns/ssn/Deployment>, ogc:SpatialObject;
+    ogc:sfWithin "http://openhps.github.io/ipin2022-solid/tracking.ttl#deployment_pl9_3".
+<http://openhps.github.io/ipin2022-solid/tracking.ttl#deployment_pl9_3_58> a ssn:Deployment, ogc:SpatialObject;
     rdfs:label "PL9.3.58"@en;
     ogc:hasGeometry [
   a ogc:Geometry;
@@ -62,8 +68,8 @@
   ogc:spatialDimension 3;
   ogc:dimension 3
 ];
-    ogc:sfWithin "http://example.com/tracking.ttl#deployment_pl9_3".
-<http://example.com/tracking.ttl#deployment_pl9_3_56> a <http://www.w3.org/ns/ssn/Deployment>, ogc:SpatialObject;
+    ogc:sfWithin "http://openhps.github.io/ipin2022-solid/tracking.ttl#deployment_pl9_3".
+<http://openhps.github.io/ipin2022-solid/tracking.ttl#deployment_pl9_3_56> a ssn:Deployment, ogc:SpatialObject;
     rdfs:label "PL9.3.56"@en;
     ogc:hasGeometry [
   a ogc:Geometry;
@@ -72,8 +78,8 @@
   ogc:spatialDimension 3;
   ogc:dimension 3
 ];
-    ogc:sfWithin "http://example.com/tracking.ttl#deployment_pl9_3".
-<http://example.com/tracking.ttl#deployment_pl9_3_32> a <http://www.w3.org/ns/ssn/Deployment>, ogc:SpatialObject;
+    ogc:sfWithin "http://openhps.github.io/ipin2022-solid/tracking.ttl#deployment_pl9_3".
+<http://openhps.github.io/ipin2022-solid/tracking.ttl#deployment_pl9_3_32> a ssn:Deployment, ogc:SpatialObject;
     rdfs:label "PL9.3.32"@en;
     ogc:hasGeometry [
   a ogc:Geometry;
@@ -82,8 +88,8 @@
   ogc:spatialDimension 3;
   ogc:dimension 3
 ];
-    ogc:sfWithin "http://example.com/tracking.ttl#deployment_pl9_3".
-<http://example.com/tracking.ttl#deployment_pl9_3_54> a <http://www.w3.org/ns/ssn/Deployment>, ogc:SpatialObject;
+    ogc:sfWithin "http://openhps.github.io/ipin2022-solid/tracking.ttl#deployment_pl9_3".
+<http://openhps.github.io/ipin2022-solid/tracking.ttl#deployment_pl9_3_54> a ssn:Deployment, ogc:SpatialObject;
     rdfs:label "PL9.3.54"@en;
     ogc:hasGeometry [
   a ogc:Geometry;
@@ -92,8 +98,8 @@
   ogc:spatialDimension 3;
   ogc:dimension 3
 ];
-    ogc:sfWithin "http://example.com/tracking.ttl#deployment_pl9_3".
-<http://example.com/tracking.ttl#deployment_pl9> a <http://www.w3.org/ns/ssn/Deployment>, ogc:SpatialObject;
+    ogc:sfWithin "http://openhps.github.io/ipin2022-solid/tracking.ttl#deployment_pl9_3".
+<http://openhps.github.io/ipin2022-solid/tracking.ttl#deployment_pl9> a ssn:Deployment, ogc:SpatialObject;
     rdfs:label "PL9"@en;
     ogc:hasGeometry [
   a ogc:Geometry;
@@ -101,8 +107,14 @@
   ogc:coordinateDimension 3;
   ogc:spatialDimension 3;
   ogc:dimension 3
+], [
+  a ogc:Geometry;
+  ogc:asWKT "POLYGON Z((0 0 0, 0.0002216816864985015 37.269999999823916 0, 46.27522168138187 37.26972475454651 0, 46.27481406261071 -0.0002752431870092348 0))"^^ogc:wktLiteral;
+  ogc:coordinateDimension 3;
+  ogc:spatialDimension 3;
+  ogc:dimension 3
 ].
-<http://example.com/tracking.ttl#deployment_pl9_3> a <http://www.w3.org/ns/ssn/Deployment>, ogc:SpatialObject;
+<http://openhps.github.io/ipin2022-solid/tracking.ttl#deployment_pl9_3> a ssn:Deployment, ogc:SpatialObject;
     rdfs:label "PL9.3"@en;
     ogc:hasGeometry [
   a ogc:Geometry;
@@ -111,8 +123,8 @@
   ogc:spatialDimension 3;
   ogc:dimension 3
 ];
-    ogc:sfWithin "http://example.com/tracking.ttl#deployment_pl9".
-<http://example.com/tracking.ttl#deployment_pl9_3_elevators> a <http://www.w3.org/ns/ssn/Deployment>, ogc:SpatialObject;
+    ogc:sfWithin "http://openhps.github.io/ipin2022-solid/tracking.ttl#deployment_pl9".
+<http://openhps.github.io/ipin2022-solid/tracking.ttl#deployment_pl9_3_elevators> a ssn:Deployment, ogc:SpatialObject;
     rdfs:label "Elevators"@en;
     ogc:hasGeometry [
   a ogc:Geometry;
@@ -121,8 +133,8 @@
   ogc:spatialDimension 3;
   ogc:dimension 3
 ];
-    ogc:sfWithin "http://example.com/tracking.ttl#deployment_pl9_3".
-<http://example.com/tracking.ttl#deployment_pl9_3_staircase> a <http://www.w3.org/ns/ssn/Deployment>, ogc:SpatialObject;
+    ogc:sfWithin "http://openhps.github.io/ipin2022-solid/tracking.ttl#deployment_pl9_3".
+<http://openhps.github.io/ipin2022-solid/tracking.ttl#deployment_pl9_3_staircase> a ssn:Deployment, ogc:SpatialObject;
     rdfs:label "Staircase"@en;
     ogc:hasGeometry [
   a ogc:Geometry;
@@ -131,8 +143,8 @@
   ogc:spatialDimension 3;
   ogc:dimension 3
 ];
-    ogc:sfWithin "http://example.com/tracking.ttl#deployment_pl9_3".
-<http://example.com/tracking.ttl#deployment_pl9_3_toilets_1> a <http://www.w3.org/ns/ssn/Deployment>, ogc:SpatialObject;
+    ogc:sfWithin "http://openhps.github.io/ipin2022-solid/tracking.ttl#deployment_pl9_3".
+<http://openhps.github.io/ipin2022-solid/tracking.ttl#deployment_pl9_3_toilets_1> a ssn:Deployment, ogc:SpatialObject;
     rdfs:label "Toilets #1"@en;
     ogc:hasGeometry [
   a ogc:Geometry;
@@ -141,8 +153,8 @@
   ogc:spatialDimension 3;
   ogc:dimension 3
 ];
-    ogc:sfWithin "http://example.com/tracking.ttl#deployment_pl9_3".
-<http://example.com/tracking.ttl#deployment_pl9_3_toilets_2> a <http://www.w3.org/ns/ssn/Deployment>, ogc:SpatialObject;
+    ogc:sfWithin "http://openhps.github.io/ipin2022-solid/tracking.ttl#deployment_pl9_3".
+<http://openhps.github.io/ipin2022-solid/tracking.ttl#deployment_pl9_3_toilets_2> a ssn:Deployment, ogc:SpatialObject;
     rdfs:label "Toilets #2"@en;
     ogc:hasGeometry [
   a ogc:Geometry;
@@ -151,4 +163,10 @@
   ogc:spatialDimension 3;
   ogc:dimension 3
 ];
-    ogc:sfWithin "http://example.com/tracking.ttl#deployment_pl9_3".
+    ogc:sfWithin "http://openhps.github.io/ipin2022-solid/tracking.ttl#deployment_pl9_3".
+<http://openhps.github.io/ipin2022-solid/tracking.ttl#system_indoor> a ssn:System;
+    rdfs:label "Outdoor positioning system"@en;
+    ssn:implements <http://openhps.github.io/ipin2022-solid/tracking.ttl#qrscanner>;
+    ssn:hasDeployment <http://openhps.github.io/ipin2022-solid/tracking.ttl#deployment_pl9>.
+<http://openhps.github.io/ipin2022-solid/tracking.ttl#qrscanner> a ssn:System;
+    rdfs:label "QR-scanner"@en.
