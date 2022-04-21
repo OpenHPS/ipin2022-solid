@@ -18,13 +18,13 @@
     "@openhps/geospatial": "^0.1.6",
     "@openhps/localstorage": "^0.2.2",
     "@openhps/rdf": "^0.1.27",
-    "@openhps/solid": "^0.1.0-alpha.15",
+    "@openhps/solid": "^0.1.0-alpha.18",
     "reflect-metadata": "^0.1.13",
     "wkt": "^0.1.1"
   },
   "devDependencies": {
     "@types/chai": "^4.3.1",
-    "@types/mocha": "^9.1.0",
+    "@types/mocha": "^9.1.1",
     "@typescript-eslint/eslint-plugin": "^5.20.0",
     "@typescript-eslint/parser": "^5.20.0",
     "chai": "^4.3.6",

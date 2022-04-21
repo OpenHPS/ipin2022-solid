@@ -111,14 +111,13 @@ export default {
                     longitude: position.latlng[0],
                     latitude: position.latlng[1],
                     altitude: position.altitude ? position.altitude : "",
-                    accuracy: position.accuracy ? position.accuracy + "m" : "",
+                    accuracy: position.accuracy ? position.accuracy + " m" : "",
                     system: position.procedure ? position.procedure : ""
                 }));
         }).catch(console.error);
     },
     loadOrientations() {
         this.controller.findAllOrientations(this.controller.getSession(), 50).then(orientations => {
-            console.log(orientations)
             this.observations.orientations = orientations
                 .map(orientation => ({
                     datetime: new Date(orientation.timestamp).toTimeString(),
@@ -129,11 +128,10 @@ export default {
     },
     loadVelocities() {
         this.controller.findAllVelocities(this.controller.getSession(), 50).then(velocities => {
-            console.log(velocities)
             this.observations.velocities = velocities
                 .map(velocity => ({
                     datetime: new Date(velocity.timestamp).toTimeString(),
-                    speed: velocity.speed + "m/s",
+                    speed: velocity.speed + " m/s",
                     system: velocity.procedure ? velocity.procedure : ""
                 }));
         }).catch(console.error);
