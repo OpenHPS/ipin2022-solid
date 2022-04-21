@@ -1,4 +1,4 @@
-import { AbsolutePosition, AngleUnit, DataObject, LengthUnit, LinearVelocityUnit, Unit } from '@openhps/core';
+import { AngleUnit, DataObject, LengthUnit, LinearVelocityUnit } from '@openhps/core';
 import { 
     IriString, 
     RDFSerializer,

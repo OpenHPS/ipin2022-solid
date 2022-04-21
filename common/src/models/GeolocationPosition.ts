@@ -1,5 +1,3 @@
-import { IriString } from "@openhps/rdf";
-
 export interface GeolocationPosition {
     heading?: number;
     speed?: number;
