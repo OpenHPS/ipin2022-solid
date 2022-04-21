@@ -1,0 +1,154 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+@prefix ogc: <http://www.opengis.net/ont/geosparql#>.
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#>.
+
+<http://example.com/tracking.ttl#deployment_pl9_3_lobby_1> a <http://www.w3.org/ns/ssn/Deployment>, ogc:SpatialObject;
+    rdfs:label "Lobby #1"@en;
+    ogc:hasGeometry [
+  a ogc:Geometry;
+  ogc:asWKT "POLYGON Z((4.392197388199003 50.82057442409754 9, 4.392281317202439 50.82061024220517 9, 4.392237888084964 50.82065085658326 9, 4.392153959008529 50.82061503847565 9))"^^ogc:wktLiteral;
+  ogc:coordinateDimension 3;
+  ogc:spatialDimension 3;
+  ogc:dimension 3
+];
+    ogc:sfWithin "http://example.com/tracking.ttl#deployment_pl9_3".
+<http://example.com/tracking.ttl#deployment_pl9_3_lobby_2> a <http://www.w3.org/ns/ssn/Deployment>, ogc:SpatialObject;
+    rdfs:label "Lobby #2"@en;
+    ogc:hasGeometry [
+  a ogc:Geometry;
+  ogc:asWKT "POLYGON Z((4.3924664417462065 50.820664285148936 9, 4.39253067158009 50.82069169606323 9, 4.39251234380312 50.82070883608084 9, 4.392448113945661 50.82068142516655 9))"^^ogc:wktLiteral;
+  ogc:coordinateDimension 3;
+  ogc:spatialDimension 3;
+  ogc:dimension 3
+];
+    ogc:sfWithin "http://example.com/tracking.ttl#deployment_pl9_3".
+<http://example.com/tracking.ttl#deployment_pl9_3_corridor> a <http://www.w3.org/ns/ssn/Deployment>, ogc:SpatialObject;
+    rdfs:label "Corridor"@en;
+    ogc:hasGeometry [
+  a ogc:Geometry;
+  ogc:asWKT "POLYGON Z((4.392590950904597 50.820547844735884 9, 4.392570897578387 50.8205392866838 9, 4.392446388369991 50.82065572709685 9, 4.392188762119957 50.82054578099254 9, 4.392313271970775 50.82042934057949 9, 4.392293218746349 50.8204207824798 9, 4.391978058082016 50.820715516196536 9, 4.391998111433015 50.82072407429622 9, 4.392170434217486 50.82056292101015 9, 4.392428060562085 50.82067286711446 9, 4.392255738666733 50.82083402040055 9, 4.392275792119517 50.82084257845263 9))"^^ogc:wktLiteral;
+  ogc:coordinateDimension 3;
+  ogc:spatialDimension 3;
+  ogc:dimension 3
+];
+    ogc:sfWithin "http://example.com/tracking.ttl#deployment_pl9_3".
+<http://example.com/tracking.ttl#deployment_pl9_3_62> a <http://www.w3.org/ns/ssn/Deployment>, ogc:SpatialObject;
+    rdfs:label "PL9.3.62"@en;
+    ogc:hasGeometry [
+  a ogc:Geometry;
+  ogc:asWKT "POLYGON Z((4.39211342970702 50.82061711440473 9, 4.392177069509504 50.820644273762674 9, 4.392110132639518 50.8207068720305 9, 4.39204649275172 50.82067971267256 9))"^^ogc:wktLiteral;
+  ogc:coordinateDimension 3;
+  ogc:spatialDimension 3;
+  ogc:dimension 3
+];
+    ogc:sfWithin "http://example.com/tracking.ttl#deployment_pl9_3".
+<http://example.com/tracking.ttl#deployment_pl9_3_60> a <http://www.w3.org/ns/ssn/Deployment>, ogc:SpatialObject;
+    rdfs:label "PL9.3.60"@en;
+    ogc:hasGeometry [
+  a ogc:Geometry;
+  ogc:asWKT "POLYGON Z((4.392239717670868 50.82037819744001 9, 4.392307780599263 50.82040724466275 9, 4.392274471790824 50.82043839481918 9, 4.3922064088170245 50.820409347596424 9))"^^ogc:wktLiteral;
+  ogc:coordinateDimension 3;
+  ogc:spatialDimension 3;
+  ogc:dimension 3
+];
+    ogc:sfWithin "http://example.com/tracking.ttl#deployment_pl9_3".
+<http://example.com/tracking.ttl#deployment_pl9_3_58> a <http://www.w3.org/ns/ssn/Deployment>, ogc:SpatialObject;
+    rdfs:label "PL9.3.58"@en;
+    ogc:hasGeometry [
+  a ogc:Geometry;
+  ogc:asWKT "POLYGON Z((4.3922064088170245 50.820409347596424 9, 4.392274471790824 50.82043839481918 9, 4.392245784743152 50.820465222697464 9, 4.392177721730248 50.82043617547472 9))"^^ogc:wktLiteral;
+  ogc:coordinateDimension 3;
+  ogc:spatialDimension 3;
+  ogc:dimension 3
+];
+    ogc:sfWithin "http://example.com/tracking.ttl#deployment_pl9_3".
+<http://example.com/tracking.ttl#deployment_pl9_3_56> a <http://www.w3.org/ns/ssn/Deployment>, ogc:SpatialObject;
+    rdfs:label "PL9.3.56"@en;
+    ogc:hasGeometry [
+  a ogc:Geometry;
+  ogc:asWKT "POLYGON Z((4.392177721730248 50.82043617547472 9, 4.392245784743152 50.820465222697464 9, 4.39220753529498 50.82050099319094 9, 4.392139472229937 50.82047194596819 9))"^^ogc:wktLiteral;
+  ogc:coordinateDimension 3;
+  ogc:spatialDimension 3;
+  ogc:dimension 3
+];
+    ogc:sfWithin "http://example.com/tracking.ttl#deployment_pl9_3".
+<http://example.com/tracking.ttl#deployment_pl9_3_32> a <http://www.w3.org/ns/ssn/Deployment>, ogc:SpatialObject;
+    rdfs:label "PL9.3.32"@en;
+    ogc:hasGeometry [
+  a ogc:Geometry;
+  ogc:asWKT "POLYGON Z((4.392005439143463 50.82059729164035 9, 4.39207350239121 50.8206263388631 9, 4.392035252679085 50.82066210930024 9, 4.391967189379199 50.82063306207748 9))"^^ogc:wktLiteral;
+  ogc:coordinateDimension 3;
+  ogc:spatialDimension 3;
+  ogc:dimension 3
+];
+    ogc:sfWithin "http://example.com/tracking.ttl#deployment_pl9_3".
+<http://example.com/tracking.ttl#deployment_pl9_3_54> a <http://www.w3.org/ns/ssn/Deployment>, ogc:SpatialObject;
+    rdfs:label "PL9.3.54"@en;
+    ogc:hasGeometry [
+  a ogc:Geometry;
+  ogc:asWKT "POLYGON Z((4.392139472229937 50.82047194596819 9, 4.39220753529498 50.82050099319094 9, 4.3921119114181675 50.820590419369886 9, 4.3920438482227775 50.82056137214713 9))"^^ogc:wktLiteral;
+  ogc:coordinateDimension 3;
+  ogc:spatialDimension 3;
+  ogc:dimension 3
+];
+    ogc:sfWithin "http://example.com/tracking.ttl#deployment_pl9_3".
+<http://example.com/tracking.ttl#deployment_pl9> a <http://www.w3.org/ns/ssn/Deployment>, ogc:SpatialObject;
+    rdfs:label "PL9"@en;
+    ogc:hasGeometry [
+  a ogc:Geometry;
+  ogc:asWKT "POLYGON Z((0 0 0, 0.0002216816864985015 37.269999999823916 0, 46.27522168138187 37.26972475454651 0, 46.27481406261071 -0.0002752431870092348 0))"^^ogc:wktLiteral;
+  ogc:coordinateDimension 3;
+  ogc:spatialDimension 3;
+  ogc:dimension 3
+].
+<http://example.com/tracking.ttl#deployment_pl9_3> a <http://www.w3.org/ns/ssn/Deployment>, ogc:SpatialObject;
+    rdfs:label "PL9.3"@en;
+    ogc:hasGeometry [
+  a ogc:Geometry;
+  ogc:asWKT "POLYGON Z((4.392680949189219 50.82056031437297 9, 4.392518989151668 50.820491195517 9, 4.392438490480154 50.82056647753262 9, 4.392322771143102 50.820517092400586 9, 4.392403270001178 50.820441810384956 9, 4.392241310785676 50.82037269114459 9, 4.391888059405071 50.82070304628146 9, 4.39205001976639 50.82077216552184 9, 4.392179670275254 50.82065091867806 9, 4.392295389943952 50.82070030381008 9, 4.392165739735563 50.82082155065386 9, 4.392327700918947 50.82089066950985 9))"^^ogc:wktLiteral;
+  ogc:coordinateDimension 3;
+  ogc:spatialDimension 3;
+  ogc:dimension 3
+];
+    ogc:sfWithin "http://example.com/tracking.ttl#deployment_pl9".
+<http://example.com/tracking.ttl#deployment_pl9_3_elevators> a <http://www.w3.org/ns/ssn/Deployment>, ogc:SpatialObject;
+    rdfs:label "Elevators"@en;
+    ogc:hasGeometry [
+  a ogc:Geometry;
+  ogc:asWKT "POLYGON Z((4.392358817110751 50.820539291271444 9, 4.3923923179211295 50.82055358829235 9, 4.392334226697049 50.820607914714955 9, 4.3923007258476945 50.82059361769404 9))"^^ogc:wktLiteral;
+  ogc:coordinateDimension 3;
+  ogc:spatialDimension 3;
+  ogc:dimension 3
+];
+    ogc:sfWithin "http://example.com/tracking.ttl#deployment_pl9_3".
+<http://example.com/tracking.ttl#deployment_pl9_3_staircase> a <http://www.w3.org/ns/ssn/Deployment>, ogc:SpatialObject;
+    rdfs:label "Staircase"@en;
+    ogc:hasGeometry [
+  a ogc:Geometry;
+  ogc:asWKT "POLYGON Z((4.392282437829498 50.82061072045075 9, 4.392315938691122 50.820625017471656 9, 4.3922582058786315 50.82067900850837 9, 4.392224704978272 50.82066471148747 9))"^^ogc:wktLiteral;
+  ogc:coordinateDimension 3;
+  ogc:spatialDimension 3;
+  ogc:dimension 3
+];
+    ogc:sfWithin "http://example.com/tracking.ttl#deployment_pl9_3".
+<http://example.com/tracking.ttl#deployment_pl9_3_toilets_1> a <http://www.w3.org/ns/ssn/Deployment>, ogc:SpatialObject;
+    rdfs:label "Toilets #1"@en;
+    ogc:hasGeometry [
+  a ogc:Geometry;
+  ogc:asWKT "POLYGON Z((4.392407667314765 50.82061169022266 9, 4.392433618705758 50.8206227653613 9, 4.39241341827625 50.82064165664491 9, 4.392387466874759 50.820630581506265 9))"^^ogc:wktLiteral;
+  ogc:coordinateDimension 3;
+  ogc:spatialDimension 3;
+  ogc:dimension 3
+];
+    ogc:sfWithin "http://example.com/tracking.ttl#deployment_pl9_3".
+<http://example.com/tracking.ttl#deployment_pl9_3_toilets_2> a <http://www.w3.org/ns/ssn/Deployment>, ogc:SpatialObject;
+    rdfs:label "Toilets #2"@en;
+    ogc:hasGeometry [
+  a ogc:Geometry;
+  ogc:asWKT "POLYGON Z((4.392241932585366 50.82054096022416 9, 4.392267883897741 50.82055203539957 9, 4.392247683401181 50.82057092668318 9, 4.392221732078308 50.820559851507774 9))"^^ogc:wktLiteral;
+  ogc:coordinateDimension 3;
+  ogc:spatialDimension 3;
+  ogc:dimension 3
+];
+    ogc:sfWithin "http://example.com/tracking.ttl#deployment_pl9_3".

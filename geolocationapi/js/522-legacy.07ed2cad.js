@@ -1,0 +1,2 @@
+"use strict";(self["webpackChunkipin2022_geolocationapi"]=self["webpackChunkipin2022_geolocationapi"]||[]).push([[522],{65522:function(e,n,i){i.r(n),i.d(n,{default:function(){return a}});var r=i(27885),t=i(3704);class a extends t.Z{decodeBlock(e){return(0,r.rr)(new Uint8Array(e)).buffer}}}}]);
+//# sourceMappingURL=522-legacy.07ed2cad.js.map
