@@ -15,7 +15,7 @@ describe('BuildingController', () => {
     });
 
     it('should find by UID', (done) => {
-        controller.findByUID("ca86da51-45d5-4860-a4b4-c6acdddff213").then(space => {
+        controller.findByUID("deployment_pl9_3_lobby_1").then(space => {
             expect(space.displayName).to.not.be.undefined;
             done();
         }).catch(done);

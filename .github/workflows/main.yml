@@ -17,6 +17,7 @@ jobs:
           npm install
           npm run build
       - name: Testing 'common'
+        working-directory: ./common
         run: |
           npm run test
       - name: Build 'geolocationapi'

@@ -1,5 +1,4 @@
 import { SerializableObject } from "@openhps/core";
-import { geo } from "@openhps/rdf/dist/types/vocab/schema";
 import { ogc } from "@openhps/rdf/vocab";
 import { DataFactory } from 'n3';
 import { Geometry } from "./Geometry";
@@ -10,11 +9,13 @@ import { Geometry } from "./Geometry";
             return {
                 predicates: {
                     [ogc.asWKT]: [
-                        DataFactory.literal(`POINT Z(${geometry.longitude} ${geometry.latitude} ${geometry.altitude})`, DataFactory.namedNode(ogc.wktLiteral)),
+                        geometry.altitude ? 
+                            DataFactory.literal(`POINT Z(${geometry.longitude} ${geometry.latitude} ${geometry.altitude})`, DataFactory.namedNode(ogc.wktLiteral)) :
+                            DataFactory.literal(`POINT(${geometry.longitude} ${geometry.latitude})`, DataFactory.namedNode(ogc.wktLiteral)),
                     ],
-                    [ogc.coordinateDimension]: [DataFactory.literal(3)],
-                    [ogc.spatialDimension]: [DataFactory.literal(3)],
-                    [ogc.dimension]: [DataFactory.literal(3)],
+                    [ogc.coordinateDimension]: [DataFactory.literal(geometry.altitude ? 3 : 2)],
+                    [ogc.spatialDimension]: [DataFactory.literal(geometry.altitude ? 3 : 2)],
+                    [ogc.dimension]: [DataFactory.literal(geometry.altitude ? 3 : 2)],
                 }
             };
         }

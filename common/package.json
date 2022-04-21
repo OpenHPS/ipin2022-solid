@@ -18,7 +18,7 @@
     "@openhps/geospatial": "^0.1.6",
     "@openhps/localstorage": "^0.2.2",
     "@openhps/rdf": "^0.1.26",
-    "@openhps/solid": "^0.1.0-alpha.10",
+    "@openhps/solid": "^0.1.0-alpha.12",
     "reflect-metadata": "^0.1.13",
     "wkt": "^0.1.1"
   },
@@ -31,7 +31,6 @@
     "eslint": "^8.13.0",
     "mocha": "^9.2.2",
     "npm-run-all": "^4.1.5",
-    "npm-run-parallel": "^0.6.0",
     "ts-node": "^10.7.0",
     "typescript": "~4.6.3"
   },
@@ -41,8 +40,7 @@
       "node": true
     },
     "extends": [
-      "eslint:recommended",
-      "@vue/typescript/recommended"
+      "eslint:recommended"
     ],
     "parserOptions": {
       "parser": "@typescript-eslint/parser"

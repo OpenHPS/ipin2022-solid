@@ -19,7 +19,7 @@
         @update:altitude="onUpdateAltitude"
         @update:altitudeaccuracy="position.altitudeAccuracy = $event"
         @update:heading="onUpdateHeading"
-        @update:speed="position.speed = $event"
+        @update:speed="onUpdateSpeed"
         @update:position="onUpdatePosition"
         @tracking-options="trackingOptions">
         <template #default="geoloc">
@@ -81,13 +81,27 @@ export default {
     },
     onUpdatePosition(position) {
       this.position.lnglat = position;
-      this.controller.updatePosition(this.position);
+      this.controller.updatePosition({
+        lnglat: this.position.lnglat,
+        altitude: this.position.altitude,
+        accuracy: this.position.accuracy,
+        altitudeAccuracy: this.position.altitudeAccuracy
+      });
     },
     onUpdateAltitude(altitude) {
       this.position.altitude = altitude;
     },
     onUpdateHeading(heading) {
       this.position.heading = heading;
+      this.controller.updatePosition({
+        heading
+      });
+    },
+    onUpdateSpeed(speed) {
+      this.position.speed = speed;
+      this.controller.updatePosition({
+        speed
+      });
     },
   },
 }
