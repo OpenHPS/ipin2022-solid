@@ -18,6 +18,7 @@ import {
     GeolocationPosition,
     BASE_URI
 } from "../models";
+import { ProxyHandlerStatic } from "@comunica/actor-http-proxy";
 import {
     getLiteral,
 } from '@inrupt/solid-client';
@@ -215,6 +216,7 @@ export class SolidController extends EventEmitter {
                 }
             } ORDER BY DESC(?datetime) LIMIT ${limit}
         `, session, {
+            httpProxyHandler: new ProxyHandlerStatic("https://proxy.linkeddatafragments.org/"),
             extensionFunctions: {
                 // GeoSPARQL 1.1 specification is still in draft
                 // this is the implementation of the asGeoJSON function in the proposal
@@ -274,7 +276,9 @@ export class SolidController extends EventEmitter {
                 UNION
                 { ?unit qudt:hasQuantityKind quantitykind:Speed }
             } ORDER BY DESC(?datetime) LIMIT ${limit}
-        `, session);
+        `, session, {
+            httpProxyHandler: new ProxyHandlerStatic("https://proxy.linkeddatafragments.org/"),
+        });
         return bindings.map((binding: Bindings) => ({
             speed: Number(binding.get("speed").value),
             timestamp: Date.parse(binding.get("datetime").value),
@@ -312,7 +316,9 @@ export class SolidController extends EventEmitter {
                         qudt:numericValue ?heading .
                 ?unit qudt:hasQuantityKind quantitykind:Angle .
             } ORDER BY DESC(?datetime) LIMIT ${limit}
-        `, session);
+        `, session, {
+            httpProxyHandler: new ProxyHandlerStatic("https://proxy.linkeddatafragments.org/"),
+        });
         return bindings.map((binding: Bindings) => ({
             heading: Number(binding.get("heading").value),
             timestamp: Date.parse(binding.get("datetime").value),
