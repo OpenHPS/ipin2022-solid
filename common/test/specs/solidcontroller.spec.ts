@@ -29,4 +29,19 @@ describe('SolidController', () => {
             done();
         }).catch(done);
     });
+    
+    it('should get all velocities', (done) => {
+        controller.findAllVelocities(session, 20).then(velocities => {
+            expect(velocities.length).to.be.greaterThanOrEqual(2);
+            done();
+        }).catch(done);
+    });
+    
+    it('should get all orientations', (done) => {
+        controller.findAllOrientations(session, 20).then(orientations => {
+            expect(orientations.length).to.be.greaterThanOrEqual(2);
+            done();
+        }).catch(done);
+    });
+
 });

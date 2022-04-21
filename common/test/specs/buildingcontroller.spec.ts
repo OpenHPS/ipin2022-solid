@@ -1,6 +1,7 @@
 import 'mocha';
 import { expect } from 'chai';
 import { BuildingController } from '../../src';
+import { building } from '../../src/models/Spaces';
 
 describe('BuildingController', () => {
     const controller: BuildingController = new BuildingController();
@@ -17,6 +18,14 @@ describe('BuildingController', () => {
     it('should find by UID', (done) => {
         controller.findByUID("deployment_pl9_3_lobby_1").then(space => {
             expect(space.displayName).to.not.be.undefined;
+            done();
+        }).catch(done);
+    });
+    
+    it('should convert the position of a space to geographical coordinates', (done) => {
+        controller.findByUID("deployment_pl9_3_lobby_1").then(space => {
+            const position = space.toPosition();
+            const geoPosition = building.transform(position);
             done();
         }).catch(done);
     });

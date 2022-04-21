@@ -1,4 +1,5 @@
-import { AbsolutePosition, DataObjectService, MemoryDataService } from "@openhps/core";
+import { building } from "../models/Spaces";
+import { AbsolutePosition, DataObjectService, GeographicalPosition, MemoryDataService } from "@openhps/core";
 import { SymbolicSpace } from "@openhps/geospatial";
 import { Spaces, BASE_URI } from '../models';
 
@@ -41,6 +42,19 @@ export class BuildingController {
             return this.findByUID(spaceUID);
         }
         return Promise.reject(`Not a valid QR-code!`);
+    }
+    
+    /**
+     * Get the centroid of a space converted to geographical coordinates
+     *
+     * @param {SymbolicSpace<AbsolutePosition>} space Symbolic space
+     * @returns {GeographicalPosition} geographical position 
+     */
+    getGeographicalPosition(space: SymbolicSpace<AbsolutePosition>): GeographicalPosition {
+        const position = space.toPosition();
+        const convertedPosition = building.transform(position);
+        convertedPosition.accuracy = position.accuracy;
+        return convertedPosition as GeographicalPosition;
     }
 
     /**

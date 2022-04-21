@@ -1,7 +1,7 @@
 <template>
   <div class="app">
     <b-button
-      :v-show="this.camera === 'off'"
+      v-if="this.camera === 'off'"
       id="scanBtn"
       size="is-large"
       icon-left="fa-solid fa-qrcode"
@@ -10,7 +10,7 @@
       @click="() => { this.camera = 'auto'; }" outlined />
 
     <QrcodeStream 
-      :v-show="this.camera != 'off'" 
+      v-if="this.camera != 'off'" 
       :camera="this.camera" 
       :track="this.paintOutline" 
       @decode="this.onDecode">
@@ -23,11 +23,11 @@
 import LoginModal from './LoginModal.vue';
 import { SolidController, BuildingController } from 'ipin2022-common';
 import { QrcodeStream } from 'vue-qrcode-reader';
-import { DataObject, DataSerializer } from '@openhps/core';
 import beepOK from '../assets/beep-02.mp3';
 import beepERR from '../assets/beep-03.mp3';
 
-DataSerializer.serialize(new DataObject())
+const PROCEDURE = "qrscanner";
+
 export default {
   name: 'ScannerComponent',
   components: { 
@@ -53,10 +53,12 @@ export default {
     onDecode(event) {
       // Get the first detected code
       this.buildingController.findByURI(event).then(space => {
-        const position = space.transform(space.toPosition(), space);
+        const position = this.buildingController.getGeographicalPosition(space);
         this.controller.updatePosition({
-          lngLat: [position.longitude, position.latitude],
-          accuracy: position.accuracy.value
+          lnglat: [position.longitude, position.latitude],
+          accuracy: position.accuracy.value,
+          altitude: position.altitude,
+          procedure: PROCEDURE
         });
         this.qr = space.displayName;
         new Audio(beepOK).play(); // Beep sound for OK

@@ -6,4 +6,5 @@ export interface GeolocationPosition {
     lnglat?: number[];
     altitude?: number;
     timestamp?: number;
+    procedure?: string;
 }

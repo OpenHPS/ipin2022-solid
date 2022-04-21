@@ -6,7 +6,6 @@ module.exports = {
   transpileDependencies: [],
   chainWebpack: config => {
     config.plugin('polyfills').use(NodePolyfillPlugin)
-
     config.module
       .rule('vue')
       .use('vue-loader')
@@ -17,6 +16,11 @@ module.exports = {
         }
         return options
       })
+  },
+  configureWebpack: {
+    module: {
+      rules: [{ sideEffects: true }]
+    }
   },
   pages: {
     index: {

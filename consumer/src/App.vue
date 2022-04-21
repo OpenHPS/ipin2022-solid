@@ -1,24 +1,22 @@
 <template>
   <div id="app">
-    <MapComponent/>
+    <MainPage/>
   </div>
 </template>
 
 <script>
-import MapComponent from './components/MapComponent.vue'
+import MainPage from './components/MainPage.vue'
 
 export default {
   name: 'App',
   components: {
-    MapComponent,
+    MainPage,
   },
 }
 </script>
 
 <style>
 @import "~buefy/dist/buefy.css";
-@import "~vuelayers/dist/vuelayers.css";
-
 html, body, #app {
   width: 100%;
   height: 100%;

@@ -17,8 +17,8 @@
     "@openhps/core": "^0.3.25",
     "@openhps/geospatial": "^0.1.6",
     "@openhps/localstorage": "^0.2.2",
-    "@openhps/rdf": "^0.1.26",
-    "@openhps/solid": "^0.1.0-alpha.12",
+    "@openhps/rdf": "^0.1.27",
+    "@openhps/solid": "^0.1.0-alpha.15",
     "reflect-metadata": "^0.1.13",
     "wkt": "^0.1.1"
   },

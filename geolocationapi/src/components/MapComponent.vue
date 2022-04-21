@@ -47,6 +47,8 @@ import { FullScreen } from 'ol/control';
 import LoginModal from './LoginModal.vue';
 import { SolidController } from 'ipin2022-common';
 
+const PROCEDURE = "geolocationapi";
+
 export default {
   name: 'MapComponent',
   components: { LoginModal },
@@ -81,11 +83,14 @@ export default {
     },
     onUpdatePosition(position) {
       this.position.lnglat = position;
+      this.center = position;
+      this.zoom = 16;
       this.controller.updatePosition({
         lnglat: this.position.lnglat,
         altitude: this.position.altitude,
         accuracy: this.position.accuracy,
-        altitudeAccuracy: this.position.altitudeAccuracy
+        altitudeAccuracy: this.position.altitudeAccuracy,
+        procedure: PROCEDURE
       });
     },
     onUpdateAltitude(altitude) {
@@ -94,13 +99,15 @@ export default {
     onUpdateHeading(heading) {
       this.position.heading = heading;
       this.controller.updatePosition({
-        heading
+        heading,
+        procedure: PROCEDURE
       });
     },
     onUpdateSpeed(speed) {
       this.position.speed = speed;
       this.controller.updatePosition({
-        speed
+        speed,
+        procedure: PROCEDURE
       });
     },
   },

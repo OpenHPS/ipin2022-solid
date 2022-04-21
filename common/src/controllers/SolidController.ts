@@ -51,14 +51,15 @@ export class SolidController extends EventEmitter {
             clientName,
             dataServiceDriver: new LocalStorageDriver(String, {
                 namespace: "example",
-            })
+            }),
+            restorePreviousSession: true
         });
         this.driver = new SolidDataDriver(DataObject);
         this.service.emit("build");
-        this.service.on("login", this.initialize.bind(this));
-
-        console.log(AbsolutePosition.prototype)
-        console.log(RDFSerializer.serialize(LengthUnit.METER))
+        this.service.on("login", (session: SolidSession) => {
+            console.log(`Logged in ${session.info.webId}`);
+            this.initialize();
+        });
     }
 
     /**
@@ -154,7 +155,7 @@ export class SolidController extends EventEmitter {
     /**
      * Update the position of a user
      *
-     * @param data 
+     * @param {GeolocationPosition} data Position
      * @returns 
      */
     async updatePosition(data: GeolocationPosition) {
@@ -188,12 +189,16 @@ export class SolidController extends EventEmitter {
             PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
             PREFIX qudt: <http://qudt.org/schema/qudt/>
 
-            SELECT ?posGeoJSON ?datetime ?accuracy {
+            SELECT ?posGeoJSON ?datetime ?accuracy ?procedureLabel {
                 ?profile a sosa:FeatureOfInterest ;
                         ssn:hasProperty ?property .
                 ?observation sosa:hasResult ?result ;
                             sosa:observedProperty ?property ;
                             sosa:resultTime ?datetime .
+                OPTIONAL {
+                    ?observation sosa:usedProcedure ?procedure .
+                    ?procedure rdfs:label ?procedureLabel .
+                }
                 ?result a geosparql:Geometry ;
                         geosparql:hasSpatialAccuracy ?spatialAccuracy ;
                         geosparql:asWKT ?posWKT .
@@ -214,20 +219,27 @@ export class SolidController extends EventEmitter {
                 // GeoSPARQL 1.1 specification is still in draft
                 // this is the implementation of the asGeoJSON function in the proposal
                 'http://www.opengis.net/def/function/geosparql/asGeoJSON'(args: Term[]) {
-                    return new Promise((resolve) => {
-                        const wktLiteral = args[0];
-                        const pattern = /^<(https?:\/\/.*)>/g;
-                        let wktString: string = wktLiteral.value.replace(pattern, "").replace("\n", "").trim();
-                        const geoJSON = wkt.parse(wktString);
-                        resolve(DataFactory.literal(JSON.stringify(geoJSON), ogc.geoJSONLiteral));
-                    });
+                    const wktLiteral = args[0];
+                    const pattern = /^<(https?:\/\/.*)>/g;
+                    let wktString: string = wktLiteral.value.replace(pattern, "").replace("\n", "").trim();
+                    const geoJSON = wkt.parse(wktString);
+                    return DataFactory.literal(JSON.stringify(geoJSON), ogc.geoJSONLiteral);
+                }
+            } as any
+        });
+        return bindings.map((binding: Bindings) => {
+            const geoJSON = JSON.parse(binding.get("posGeoJSON").value);
+            if (geoJSON) {
+                const coordinates: Array<number> = geoJSON.coordinates;
+                return {
+                    latlng: coordinates.splice(0, 2),
+                    altitude: coordinates.length === 3 ? coordinates[2] : undefined,
+                    timestamp: Date.parse(binding.get("datetime").value),
+                    accuracy: Number(binding.get("accuracy").value),
+                    procedure: binding.get("procedureLabel") ? binding.get("procedureLabel").value : undefined
                 }
             }
-        });
-        return bindings.map((binding: Bindings) => ({
-            speed: Number(binding.get("speed").value),
-            timestamp: Number(binding.get("datetime").value)
-        }));
+        }).filter(pos => pos !== undefined);
     }
 
     /**
@@ -243,24 +255,31 @@ export class SolidController extends EventEmitter {
             PREFIX sosa: <http://www.w3.org/ns/sosa/>
             PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
             PREFIX qudt: <http://qudt.org/schema/qudt/>
-            PREFIC quantitykind: <http://qudt.org/vocab/quantitykind/>
+            PREFIX quantitykind: <http://qudt.org/vocab/quantitykind/>
 
-            SELECT ?speed ?datetime {
+            SELECT ?speed ?datetime ?procedureLabel {
                 ?profile a sosa:FeatureOfInterest ;
                         ssn:hasProperty ?property .
                 ?observation sosa:hasResult ?result ;
                             sosa:observedProperty ?property ;
                             sosa:resultTime ?datetime .
+                OPTIONAL {
+                    ?observation sosa:usedProcedure ?procedure .
+                    ?procedure rdfs:label ?procedureLabel .
+                }
                 ?result a qudt:QuantityValue ;
                         qudt:unit ?unit ;
                         qudt:numericValue ?speed .
-                ?unit qudt:hasQuantityKind quantitykind:LinearVelocity .
+                { ?unit qudt:hasQuantityKind quantitykind:Velocity }
+                UNION
+                { ?unit qudt:hasQuantityKind quantitykind:Speed }
             } ORDER BY DESC(?datetime) LIMIT ${limit}
         `, session);
         return bindings.map((binding: Bindings) => ({
             speed: Number(binding.get("speed").value),
-            timestamp: Number(binding.get("datetime").value)
-        }));
+            timestamp: Date.parse(binding.get("datetime").value),
+            procedure: binding.get("procedureLabel") ? binding.get("procedureLabel").value : undefined
+        })).filter(pos => pos !== undefined);
     }
 
     /**
@@ -276,14 +295,18 @@ export class SolidController extends EventEmitter {
             PREFIX sosa: <http://www.w3.org/ns/sosa/>
             PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
             PREFIX qudt: <http://qudt.org/schema/qudt/>
-            PREFIC quantitykind: <http://qudt.org/vocab/quantitykind/>
+            PREFIX quantitykind: <http://qudt.org/vocab/quantitykind/>
 
-            SELECT ?heading ?datetime {
+            SELECT ?heading ?datetime ?procedureLabel {
                 ?profile a sosa:FeatureOfInterest ;
                         ssn:hasProperty ?property .
                 ?observation sosa:hasResult ?result ;
                             sosa:observedProperty ?property ;
                             sosa:resultTime ?datetime .
+                OPTIONAL {
+                    ?observation sosa:usedProcedure ?procedure .
+                    ?procedure rdfs:label ?procedureLabel .
+                }
                 ?result a qudt:QuantityValue ;
                         qudt:unit ?unit ;
                         qudt:numericValue ?heading .
@@ -292,11 +315,12 @@ export class SolidController extends EventEmitter {
         `, session);
         return bindings.map((binding: Bindings) => ({
             heading: Number(binding.get("heading").value),
-            timestamp: Number(binding.get("datetime").value)
-        }));
+            timestamp: Date.parse(binding.get("datetime").value),
+            procedure: binding.get("procedureLabel") ? binding.get("procedureLabel").value : undefined
+        })).filter(pos => pos !== undefined);
     }
 
-    async createPosition(session: SolidSession, data: GeolocationPosition, procedure?: string) {
+    async createPosition(session: SolidSession, data: GeolocationPosition) {
         const timestamp = new Date();
         const observation = new Observation(this.service.getDocumentURL(session, `/properties/position.ttl#${timestamp.getTime()}`).href);
         observation.featuresOfInterest.push(this.me);
@@ -311,11 +335,12 @@ export class SolidController extends EventEmitter {
         position.altitude = data.altitude;
         position.spatialAccuracy = accuracy;
         observation.results.push(position);
-        observation.usedProcedures.push(`${BASE_URI}${procedure}` as IriString);
+        if (data.procedure)
+            observation.usedProcedures.push(`${BASE_URI}${data.procedure}` as IriString);
         await this.service.setThing(session, RDFSerializer.serializeToSubjects(observation)[0]);
     }
     
-    async createOrientation(session: SolidSession, data: GeolocationPosition, procedure?: string) {
+    async createOrientation(session: SolidSession, data: GeolocationPosition) {
         const timestamp = new Date();
         const observation = new Observation(this.service.getDocumentURL(session, `/properties/orientation.ttl#${timestamp.getTime()}`).href);
         observation.featuresOfInterest.push(this.me);
@@ -325,11 +350,12 @@ export class SolidController extends EventEmitter {
         value.unit = AngleUnit.DEGREE;
         value.numericValue = data.heading;
         observation.results.push(value);
-        observation.usedProcedures.push(`${BASE_URI}${procedure}` as IriString);
+        if (data.procedure)
+            observation.usedProcedures.push(`${BASE_URI}${data.procedure}` as IriString);
         await this.service.setThing(session, RDFSerializer.serializeToSubjects(observation)[0]);
     }
 
-    async createVelocity(session: SolidSession, data: GeolocationPosition, procedure?: string) {
+    async createVelocity(session: SolidSession, data: GeolocationPosition) {
         const timestamp = new Date();
         const observation = new Observation(this.service.getDocumentURL(session, `/properties/velocity.ttl#${timestamp.getTime()}`).href);
         observation.featuresOfInterest.push(this.me);
@@ -339,7 +365,8 @@ export class SolidController extends EventEmitter {
         value.unit = LinearVelocityUnit.METER_PER_SECOND;
         value.numericValue = data.speed;
         observation.results.push(value);
-        observation.usedProcedures.push(`${BASE_URI}${procedure}` as IriString);
+        if (data.procedure)
+            observation.usedProcedures.push(`${BASE_URI}${data.procedure}` as IriString);
         await this.service.setThing(session, RDFSerializer.serializeToSubjects(observation)[0]);
     }
 }

@@ -17,6 +17,11 @@ module.exports = {
         return options
       })
   },
+  configureWebpack: {
+    module: {
+      rules: [{ sideEffects: true }]
+    }
+  },
   pages: {
     index: {
       // entry for the page
