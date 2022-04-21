@@ -2,7 +2,7 @@ const fs = require('fs');
 const NodePolyfillPlugin = require('node-polyfill-webpack-plugin');
 
 module.exports = {
-  publicPath: '/',
+  publicPath: process.env.NODE_ENV === 'development' ? '/' : '/consumer/',
   transpileDependencies: [],
   chainWebpack: config => {
     config.plugin('polyfills').use(NodePolyfillPlugin)

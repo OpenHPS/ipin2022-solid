@@ -15,5 +15,5 @@ export * from './Procedure';
 export * from './GeolocationPosition';
 export * as Spaces from './Spaces';
 
-const BASE_URI = "http://example.com/tracking.ttl#";
+const BASE_URI = "http://openhps.github.io/ipin2022-solid/tracking.ttl#";
 export { BASE_URI };

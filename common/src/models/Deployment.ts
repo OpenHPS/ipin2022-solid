@@ -4,13 +4,14 @@ import { PolygonGeometry } from "./PolygonGeometry";
 import { Platform } from "./Platform";
 import { Address } from "./Address";
 import { IriString } from "@inrupt/solid-client";
+import { SerializableNamedNode } from "@openhps/rdf";
 
 @SerializableObject({
     rdf: {
         type: [ssn.Deployment, ogc.SpatialObject]
     }
 })
-export class Deployment {
+export class Deployment extends SerializableNamedNode {
     @SerializableMember({
         rdf: {
             predicate: rdfs.label,

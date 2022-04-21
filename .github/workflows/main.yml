@@ -31,6 +31,7 @@ jobs:
         run: |
           npm install
           npm run build
+          npm run generate
       - name: Build 'consumer'
         working-directory: ./consumer
         run: |
@@ -40,12 +41,16 @@ jobs:
         run: |
           mkdir ./_site
           mkdir ./_site/qrscanner
+          mkdir ./_site/qrscanner/pages
           mkdir ./_site/geolocationapi
           mkdir ./_site/consumer
+          
           cp -r ./qrscanner/dist/. ./_site/qrscanner/
+          cp -r ./qrscanner/pages/. ./_site/qrscanner/pages/
           cp -r ./geolocationapi/dist/. ./_site/geolocationapi/
           cp -r ./consumer/dist/. ./_site/consumer/
           cp ./common/dist/tracking.ttl ./_site/tracking.ttl
+          touch ./_site/index.html
       - name: Deploy site to GitHub
         uses: peaceiris/actions-gh-pages@v3
         with:
