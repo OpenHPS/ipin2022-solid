@@ -166,7 +166,11 @@
     ogc:sfWithin "http://openhps.github.io/ipin2022-solid/tracking.ttl#deployment_pl9_3".
 <http://openhps.github.io/ipin2022-solid/tracking.ttl#system_indoor> a ssn:System;
     rdfs:label "Outdoor positioning system"@en;
-    ssn:implements <http://openhps.github.io/ipin2022-solid/tracking.ttl#qrscanner>;
+    ssn:implements <http://openhps.github.io/ipin2022-solid/tracking.ttl#qrscanner_checkin>, <http://openhps.github.io/ipin2022-solid/tracking.ttl#qrscanner_checkout>;
     ssn:hasDeployment <http://openhps.github.io/ipin2022-solid/tracking.ttl#deployment_pl9>.
-<http://openhps.github.io/ipin2022-solid/tracking.ttl#qrscanner> a ssn:System;
-    rdfs:label "QR-scanner"@en.
+<http://openhps.github.io/ipin2022-solid/tracking.ttl#qrscanner_checkin> a ssn:System;
+    rdfs:label "QR-scanner Check-in"@en;
+    rdfs:comment "The act of scanning a QR-code to check-in to a room or space."@en.
+<http://openhps.github.io/ipin2022-solid/tracking.ttl#qrscanner_checkout> a ssn:System;
+    rdfs:label "QR-scanner Check-out"@en;
+    rdfs:comment "The act of scanning a QR-code to check-out from a room or space."@en.
