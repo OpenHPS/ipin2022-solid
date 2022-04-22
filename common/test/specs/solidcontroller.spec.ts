@@ -30,6 +30,16 @@ describe('SolidController', () => {
         }).catch(done);
     });
     
+    it('should get all positions of a specific procedure', (done) => {
+        controller.findAllPositions(session, 1000, 20, "qrscanner").then(positions => {
+            expect(positions.length).to.be.greaterThanOrEqual(1);
+            positions.forEach(position => {
+                expect(position.procedure).to.equal("QR-scanner");
+            });
+            done();
+        }).catch(done);
+    });
+    
     it('should get all velocities', (done) => {
         controller.findAllVelocities(session, 20).then(velocities => {
             expect(velocities.length).to.be.greaterThanOrEqual(2);

@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "ipin2022-common": "file:../common/",
+    "ipin2022-components": "file:../components/",
     "buefy": "^0.9.4",
     "core-js": "^3.6.5",
     "ol": "^6.12.0",

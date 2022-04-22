@@ -1,5 +1,6 @@
 <template>
   <div class="map">
+    <MenuComponent :controller="controller" :title="title" />
     <VlMap
       ref="map"
       data-projection="EPSG:4326"
@@ -44,16 +45,17 @@
 
 <script>
 import { FullScreen } from 'ol/control';
-import LoginModal from './LoginModal.vue';
+import { LoginModal, MenuComponent } from 'ipin2022-components';
 import { SolidController } from 'ipin2022-common';
 
 const PROCEDURE = "geolocationapi";
 
 export default {
   name: 'MapComponent',
-  components: { LoginModal },
+  components: { LoginModal, MenuComponent },
   data () {
     return {
+      title: "IPIN2022 Geolocation API",
       center: [0, 0],
       zoom: 2,
       rotation: 0,
@@ -71,7 +73,7 @@ export default {
     }
   },
   beforeMount() {
-    this.controller = new SolidController("IPIN2022 Geolocation API");
+    this.controller = new SolidController(this.title);
   },
   methods: {
     onMapCreated(vm) {

@@ -24,6 +24,11 @@ jobs:
         working-directory: ./common
         run: |
           npm run test
+      - name: Build 'components'
+        working-directory: ./components
+        run: |
+          npm install
+          npm run build
       - name: Build 'geolocationapi'
         working-directory: ./geolocationapi
         run: |

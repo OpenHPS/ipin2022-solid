@@ -45,9 +45,6 @@ export default {
     methods: {
         login() {
             this.controller.login(this.issuer);
-        },
-        isLoggedIn() {
-            return this.controller ? this.controller.isLoggedIn : false;
         }
     },
     mounted() {
@@ -59,5 +56,5 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import "~bulma/sass/utilities/all";
+@import "node_modules/bulma/sass/utilities/all";
 </style>

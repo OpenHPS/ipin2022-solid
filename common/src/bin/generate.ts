@@ -21,9 +21,14 @@ store.addQuads(RDFSerializer.serializeToQuads(system1));
 // QR-scanner
 const system2 = new System(`${BASE_URI}system_indoor`);
 system2.label = "Outdoor positioning system";
-const procedure2 = new Procedure(`${BASE_URI}qrscanner`);
-procedure2.label = "QR-scanner";
+const procedure2 = new Procedure(`${BASE_URI}qrscanner_checkin`);
+procedure2.label = "QR-scanner Check-in";
+procedure2.comment = "The act of scanning a QR-code to check-in to a room or space.";
+const procedure3 = new Procedure(`${BASE_URI}qrscanner_checkout`);
+procedure3.label = "QR-scanner Check-out";
+procedure3.comment = "The act of scanning a QR-code to check-out from a room or space.";
 system2.procedures.push(procedure2);
+system2.procedures.push(procedure3);
 
 // Convert each space
 Object.keys(Spaces).forEach(key => {

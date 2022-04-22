@@ -1,5 +1,6 @@
 <template>
   <div class="app">
+    <MenuComponent :controller="controller" :title="title" />
     <b-tabs>
         <b-tab-item label="Position">
             <b-table :data="observations.positions" :columns="columns.positions"></b-table>
@@ -18,16 +19,18 @@
 </template>
 
 <script>
-import LoginModal from './LoginModal.vue';
+import { LoginModal, MenuComponent } from 'ipin2022-components';
 import { SolidController } from 'ipin2022-common';
 
 export default {
   name: 'MainPage',
   components: { 
     LoginModal,
+    MenuComponent
   },
   data () {
     return {
+        title: "IPIN2022 Consumer Application",
         controller: null,
         columns: {
             positions: [
@@ -93,7 +96,7 @@ export default {
     }
   },
   beforeMount() {
-    this.controller = new SolidController("IPIN2022 Consumer Application");
+    this.controller = new SolidController(this.title);
   },
   mounted() {
     this.controller.once('ready', () => {

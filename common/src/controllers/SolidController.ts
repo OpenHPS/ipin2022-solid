@@ -51,7 +51,7 @@ export class SolidController extends EventEmitter {
         this.service = new SolidClientService({
             clientName,
             dataServiceDriver: new LocalStorageDriver(String, {
-                namespace: "example",
+                namespace: clientName.toLowerCase().replace(/\s/g, "_"),
             }),
             restorePreviousSession: true
         });
@@ -88,6 +88,13 @@ export class SolidController extends EventEmitter {
      */
     async login(issuer: IriString) {
         await this.service.login(issuer);
+    }
+    
+    /**
+     * Logout a solid session 
+     */
+    async logout() {
+        await this.service.logout(this.getSession() as any);
     }
 
     /**
@@ -179,9 +186,10 @@ export class SolidController extends EventEmitter {
      * @param {SolidSession} session Solid Pod to get positions for
      * @param {number} [minAccuracy] Minimum accuracy
      * @param {number} [limit] Amount of positions to fetch 
+     * @param {string} [procedure] Optional filter on the procedure used
      * @returns {Promise<GeolocationPosition[]>} Promise of geolocation interface with position
      */
-    async findAllPositions(session: SolidSession, minAccuracy?: number, limit: number = 20): Promise<GeolocationPosition[]> {
+    async findAllPositions(session: SolidSession, minAccuracy?: number, limit: number = 20, procedure?: string): Promise<GeolocationPosition[]> {
         const bindings = await this.driver.queryBindingsSolid(`
             PREFIX geosparql: <http://www.opengis.net/ont/geosparql#>
             PREFIX geof: <http://www.opengis.net/def/function/geosparql/>
@@ -214,6 +222,7 @@ export class SolidController extends EventEmitter {
                     BIND(((?value * ?multiplier) + ?offset) AS ?accuracy)
                     ${minAccuracy ? `FILTER(?accuracy <= ${minAccuracy})` : ""}
                 }
+                ${procedure ? `FILTER(?procedure = <${BASE_URI}${procedure}>)` : ""}
             } ORDER BY DESC(?datetime) LIMIT ${limit}
         `, session, {
             httpProxyHandler: new ProxyHandlerStatic("https://proxy.linkeddatafragments.org/"),

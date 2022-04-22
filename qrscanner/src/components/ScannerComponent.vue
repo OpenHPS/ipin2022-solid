@@ -1,5 +1,6 @@
 <template>
   <div class="app">
+    <MenuComponent :controller="controller" :title="title" />
     <b-button
       v-if="this.camera === 'off'"
       id="scanBtn"
@@ -20,7 +21,7 @@
 </template>
 
 <script>
-import LoginModal from './LoginModal.vue';
+import { LoginModal, MenuComponent } from 'ipin2022-components';
 import { SolidController, BuildingController } from 'ipin2022-common';
 import { QrcodeStream } from 'vue-qrcode-reader';
 import beepOK from '../assets/beep-02.mp3';
@@ -32,10 +33,12 @@ export default {
   name: 'ScannerComponent',
   components: { 
     LoginModal,
+    MenuComponent,
     QrcodeStream,
   },
   data () {
     return {
+      title: "IPIN2022 QR-scanner",
       controller: null,
       buildingController: null,
       qr: undefined,
@@ -43,7 +46,7 @@ export default {
     }
   },
   beforeMount() {
-    this.controller = new SolidController("IPIN2022 QR-scanner");
+    this.controller = new SolidController(this.title);
     this.buildingController = new BuildingController();
     this.buildingController.initialize().then(() => {
       // Ready
