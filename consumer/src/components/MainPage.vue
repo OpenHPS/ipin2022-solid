@@ -5,6 +5,7 @@
         <b-tab-item label="Position">
             <b-table 
                 :striped="true" 
+                :narrowed="true"
                 :loading="loading.positions"
                 :data="observations.positions" 
                 :columns="columns.positions">
@@ -13,7 +14,8 @@
 
         <b-tab-item label="Orientation">
             <b-table 
-                :striped="true" 
+                :striped="true"
+                :narrowed="true"
                 :loading="loading.orientations"
                 :data="observations.orientations" 
                 :columns="columns.orientations">
@@ -23,6 +25,7 @@
         <b-tab-item label="Velocity">
             <b-table 
                 :striped="true" 
+                :narrowed="true"
                 :loading="loading.velocities"
                 :data="observations.velocities" 
                 :columns="columns.velocities">
@@ -144,7 +147,7 @@ export default {
     loadOrientations() {
         this.loading.orientations = true;
         this.controller.findAllOrientations(this.controller.getSession(), 50).then(orientations => {
-            this.loading.orientations = true;
+            this.loading.orientations = false;
             this.observations.orientations = orientations
                 .map(orientation => ({
                     datetime: new Date(orientation.timestamp).toTimeString(),
@@ -156,7 +159,7 @@ export default {
     loadVelocities() {
         this.loading.velocities = true;
         this.controller.findAllVelocities(this.controller.getSession(), 50).then(velocities => {
-            this.loading.velocities = true;
+            this.loading.velocities = false;
             this.observations.velocities = velocities
                 .map(velocity => ({
                     datetime: new Date(velocity.timestamp).toTimeString(),

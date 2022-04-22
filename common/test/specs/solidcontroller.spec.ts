@@ -31,11 +31,18 @@ describe('SolidController', () => {
     });
     
     it('should get all positions of a specific procedure', (done) => {
-        controller.findAllPositions(session, 1000, 20, "qrscanner").then(positions => {
+        controller.findAllPositions(session, 1000, 20, "qrscanner_checkin").then(positions => {
             expect(positions.length).to.be.greaterThanOrEqual(1);
             positions.forEach(position => {
-                expect(position.procedure).to.equal("QR-scanner");
+                expect(position.procedure).to.equal("QR-scanner Check-in");
             });
+            done();
+        }).catch(done);
+    });
+
+    it('should get all positions of a specific array of procedures', (done) => {
+        controller.findAllPositions(session, 1000, 20, ["qrscanner_checkin", "geolocationapi"]).then(positions => {
+            expect(positions.length).to.be.greaterThanOrEqual(3);
             done();
         }).catch(done);
     });

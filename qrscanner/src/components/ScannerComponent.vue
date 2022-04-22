@@ -27,7 +27,8 @@ import { QrcodeStream } from 'vue-qrcode-reader';
 import beepOK from '../assets/beep-02.mp3';
 import beepERR from '../assets/beep-03.mp3';
 
-const PROCEDURE = "qrscanner";
+const PROCEDURE_CHECK_IN = "qrscanner_checkin";
+const PROCEDURE_CHECK_OUT = "qrscanner_checkout";
 
 export default {
   name: 'ScannerComponent',
@@ -56,12 +57,21 @@ export default {
     onDecode(event) {
       // Get the first detected code
       this.buildingController.findByURI(event).then(space => {
+        // Check if check in or check out
+        // this.controller.findAllPositions(
+        //   this.controller.getSession(),
+        //   undefined,
+        //   1,
+        //   [PROCEDURE_CHECK_IN, PROCEDURE_CHECK_OUT]
+        // ).then(positions => {
+        //   if (positions.)
+        // });
         const position = this.buildingController.getGeographicalPosition(space);
         this.controller.updatePosition({
           lnglat: [position.longitude, position.latitude],
           accuracy: position.accuracy.value,
           altitude: position.altitude,
-          procedure: PROCEDURE
+          procedure: PROCEDURE_CHECK_IN
         });
         this.qr = space.displayName;
         new Audio(beepOK).play(); // Beep sound for OK
