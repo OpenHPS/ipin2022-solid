@@ -3,15 +3,30 @@
     <MenuComponent :controller="controller" :title="title" />
     <b-tabs>
         <b-tab-item label="Position">
-            <b-table :data="observations.positions" :columns="columns.positions"></b-table>
+            <b-table 
+                :striped="true" 
+                :loading="loading.positions"
+                :data="observations.positions" 
+                :columns="columns.positions">
+            </b-table>
         </b-tab-item>
 
         <b-tab-item label="Orientation">
-            <b-table :data="observations.orientations" :columns="columns.orientations"></b-table>
+            <b-table 
+                :striped="true" 
+                :loading="loading.orientations"
+                :data="observations.orientations" 
+                :columns="columns.orientations">
+            </b-table>
         </b-tab-item>
 
         <b-tab-item label="Velocity">
-            <b-table :data="observations.positions" :columns="columns.positions"></b-table>
+            <b-table 
+                :striped="true" 
+                :loading="loading.velocities"
+                :data="observations.velocities" 
+                :columns="columns.velocities">
+            </b-table>
         </b-tab-item>
     </b-tabs>
     <LoginModal :controller="controller" />
@@ -32,6 +47,11 @@ export default {
     return {
         title: "IPIN2022 Consumer Application",
         controller: null,
+        loading: {
+            positions: true,
+            velocities: true,
+            orientations: true
+        },
         columns: {
             positions: [
                 {
@@ -107,7 +127,9 @@ export default {
   },
   methods: {
     loadPositions() {
+        this.loading.positions = true;
         this.controller.findAllPositions(this.controller.getSession(), 50).then(positions => {
+            this.loading.positions = false;
             this.observations.positions = positions
                 .map(position => ({
                     datetime: new Date(position.timestamp).toTimeString(),
@@ -120,7 +142,9 @@ export default {
         }).catch(console.error);
     },
     loadOrientations() {
+        this.loading.orientations = true;
         this.controller.findAllOrientations(this.controller.getSession(), 50).then(orientations => {
+            this.loading.orientations = true;
             this.observations.orientations = orientations
                 .map(orientation => ({
                     datetime: new Date(orientation.timestamp).toTimeString(),
@@ -130,7 +154,9 @@ export default {
         }).catch(console.error);
     },
     loadVelocities() {
+        this.loading.velocities = true;
         this.controller.findAllVelocities(this.controller.getSession(), 50).then(velocities => {
+            this.loading.velocities = true;
             this.observations.velocities = velocities
                 .map(velocity => ({
                     datetime: new Date(velocity.timestamp).toTimeString(),
