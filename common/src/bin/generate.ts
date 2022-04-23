@@ -5,6 +5,7 @@ import { AbsolutePosition } from '@openhps/core';
 import { IriString, RDFSerializer, Store, ssn, ogc } from '@openhps/rdf';
 import { BASE_URI, Spaces, Deployment, PolygonGeometry, System, Procedure, ObjectProperty } from '..';
 import { building } from '../models/Spaces';
+import { procedure } from '@openhps/rdf/dist/types/vocab/schema';
 
 // Quad store
 const store = new Store();
@@ -23,6 +24,7 @@ system1.label = "Outdoor positioning system";
 store.addQuads(RDFSerializer.serializeToQuads(system1));
 const procedure1 = new Procedure(`${BASE_URI}geolocationapi`);
 procedure1.label = "Geolocation API";
+procedure1.comment = "Browser Geolocation API"
 system1.procedures.push(procedure1);
 store.addQuads(RDFSerializer.serializeToQuads(system1));
 

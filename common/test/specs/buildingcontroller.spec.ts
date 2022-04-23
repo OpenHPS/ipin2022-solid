@@ -2,6 +2,7 @@ import 'mocha';
 import { expect } from 'chai';
 import { BuildingController } from '../../src';
 import { building } from '../../src/models/Spaces';
+import { GeographicalPosition } from '@openhps/core';
 
 describe('BuildingController', () => {
     const controller: BuildingController = new BuildingController();
@@ -25,7 +26,8 @@ describe('BuildingController', () => {
     it('should convert the position of a space to geographical coordinates', (done) => {
         controller.findByUID("deployment_pl9_3_lobby_1").then(space => {
             const position = space.toPosition();
-            const geoPosition = building.transform(position);
+            const geoPosition: GeographicalPosition = building.transform(position);
+            expect(geoPosition.altitude).to.be.greaterThan(80);
             done();
         }).catch(done);
     });

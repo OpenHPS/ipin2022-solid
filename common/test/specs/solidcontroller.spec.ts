@@ -40,15 +40,16 @@ describe('SolidController', () => {
         }).catch(done);
     });
 
-    // it('should get all positions of geolocationapi', (done) => {
-    //     controller.findAllPositions(session, 1000, 20, BASE_URI + "geolocationapi" as IriString).then(positions => {
-    //         expect(positions.length).to.be.greaterThanOrEqual(1);
-    //         positions.forEach(position => {
-    //             expect(position.procedure.label).to.not.be.undefined;
-    //         });
-    //         done();
-    //     }).catch(done);
-    // });
+    it('should get all positions of geolocationapi', (done) => {
+        controller.findAllPositions(session, 1000, 20, BASE_URI + "geolocationapi" as IriString).then(positions => {
+            expect(positions.length).to.be.greaterThanOrEqual(1);
+            console.log(positions)
+            positions.forEach(position => {
+                expect(position.procedure.label).to.not.be.undefined;
+            });
+            done();
+        }).catch(done);
+    });
 
     it('should get all positions of a specific array of procedures', (done) => {
         controller.findAllPositions(session, 1000, 20, [
@@ -76,6 +77,10 @@ describe('SolidController', () => {
     it('should get all velocities', (done) => {
         controller.findAllVelocities(session, 20).then(velocities => {
             expect(velocities.length).to.be.greaterThanOrEqual(2);
+            velocities.forEach(velocity => {
+                if (velocity.procedure)
+                    expect(velocity.procedure.label).to.equal("Geolocation API");
+            });
             done();
         }).catch(done);
     });
@@ -83,6 +88,10 @@ describe('SolidController', () => {
     it('should get all orientations', (done) => {
         controller.findAllOrientations(session, 20).then(orientations => {
             expect(orientations.length).to.be.greaterThanOrEqual(2);
+            orientations.forEach(orientation => {
+                if (orientation.procedure)
+                    expect(orientation.procedure.label).to.equal("Geolocation API");
+            });
             done();
         }).catch(done);
     });

@@ -199,7 +199,7 @@ export class SolidController extends EventEmitter {
                     BIND(geof:asGeoJSON(?deploymentGeometryWKT) AS ?deploymentGeometryJSON)
                 } LIMIT 1
             `, {
-                sources: [deploymentUri],
+                sources: [deploymentUri.replace("http:", "https:")],
                 httpProxyHandler: new ProxyHandlerStatic("https://proxy.linkeddatafragments.org/"),
                 extensionFunctions: {
                     // GeoSPARQL 1.1 specification is still in draft
@@ -235,10 +235,12 @@ export class SolidController extends EventEmitter {
 
                 SELECT ?procedureLabel ?procedureComment {
                     <${procedureUri}> rdfs:label ?procedureLabel ;
-                                    rdfs:comment ?procedureComment .
+                    OPTIONAL { 
+                        <${procedureUri}> rdfs:comment ?procedureComment ;
+                    }
                 } LIMIT 1
             `, {
-                sources: [procedureUri],
+                sources: [procedureUri.replace("http:", "https:")],
                 httpProxyHandler: new ProxyHandlerStatic("https://proxy.linkeddatafragments.org/"),
             }).then(bindings => {
                 const results = bindings.map((binding: Bindings) => {

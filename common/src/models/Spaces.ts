@@ -4,7 +4,7 @@ import { Building, Corridor, Floor, Room, Zone } from "@openhps/geospatial";
 const building = new Building("PL9").setUID("deployment_pl9")
     .setBounds({
         topLeft: new GeographicalPosition(
-            50.8203726927966, 4.392241309019189
+            50.8203726927966, 4.392241309019189, 83
         ),
         width: 46.275,
         height: 37.27,
