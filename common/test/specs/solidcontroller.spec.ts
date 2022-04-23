@@ -40,15 +40,15 @@ describe('SolidController', () => {
         }).catch(done);
     });
 
-    it('should get all positions of geolocationapi', (done) => {
-        controller.findAllPositions(session, 1000, 20, BASE_URI + "geolocationapi" as IriString).then(positions => {
-            expect(positions.length).to.be.greaterThanOrEqual(1);
-            positions.forEach(position => {
-                expect(position.procedure.label).to.not.be.undefined;
-            });
-            done();
-        }).catch(done);
-    });
+    // it('should get all positions of geolocationapi', (done) => {
+    //     controller.findAllPositions(session, 1000, 20, BASE_URI + "geolocationapi" as IriString).then(positions => {
+    //         expect(positions.length).to.be.greaterThanOrEqual(1);
+    //         positions.forEach(position => {
+    //             expect(position.procedure.label).to.not.be.undefined;
+    //         });
+    //         done();
+    //     }).catch(done);
+    // });
 
     it('should get all positions of a specific array of procedures', (done) => {
         controller.findAllPositions(session, 1000, 20, [

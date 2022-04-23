@@ -170,7 +170,7 @@ export class SolidController extends EventEmitter {
         if (session === undefined) {
             return;
         }
-        
+
         console.debug("Updating position", data);
 
         if (data.lnglat)
@@ -228,7 +228,6 @@ export class SolidController extends EventEmitter {
 
     findProcedure(procedureUri: IriString): Promise<any> {
         return new Promise((resolve, reject) => {
-            console.log(procedureUri)
             this.driver.queryBindings(`
                 PREFIX sosa: <http://www.w3.org/ns/sosa/>
                 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
