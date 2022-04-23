@@ -60,6 +60,7 @@ export default {
         this.qr = space.displayName;
         new Audio(beepOK).play(); // Beep sound for OK
         this.camera = 'off';
+
         // Check if check in or check out
         return Promise.all([space, this.controller.findAllPositions(
           this.controller.getSession(),

@@ -28,6 +28,8 @@ describe('BuildingController', () => {
             const position = space.toPosition();
             const geoPosition: GeographicalPosition = building.transform(position);
             expect(geoPosition.altitude).to.be.greaterThan(80);
+            const geoPosition2: GeographicalPosition = controller.getGeographicalPosition(space);
+            expect(geoPosition2.altitude).to.be.greaterThan(80);
             done();
         }).catch(done);
     });

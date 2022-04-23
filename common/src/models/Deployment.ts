@@ -3,7 +3,6 @@ import { rdfs, ssn, ogc, vcard } from "@openhps/rdf/vocab";
 import { PolygonGeometry } from "./PolygonGeometry";
 import { Platform } from "./Platform";
 import { Address } from "./Address";
-import { IriString } from "@inrupt/solid-client";
 import { SerializableNamedNode } from "@openhps/rdf";
 
 @SerializableObject({
@@ -55,5 +54,5 @@ export class Deployment extends SerializableNamedNode {
             predicate: ogc.sfWithin
         }
     })
-    within?: IriString;
+    within?: Deployment;
 }

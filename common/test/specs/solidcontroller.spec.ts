@@ -11,9 +11,10 @@ describe('SolidController', () => {
         sessionInfo: {
             webId: "https://maximvdw.solidweb.org/profile/card#me",
             sessionId: undefined,
-            isLoggedIn: false,
+            isLoggedIn: true,
         }
     });
+    (controller.service as any).session = session as any;
 
     it('should serialize units', () => {
         const accuracy = new QuantityValue();
@@ -32,10 +33,7 @@ describe('SolidController', () => {
     
     it('should get all positions of qrscanner', (done) => {
         controller.findAllPositions(session, 1000, 20, BASE_URI + "qrscanner_checkin" as IriString).then(positions => {
-            expect(positions.length).to.be.greaterThanOrEqual(1);
-            positions.forEach(position => {
-                expect(position.procedure.label).to.equal("QR-scanner Check-in");
-            });
+            expect(positions.length).to.be.greaterThanOrEqual(1);;
             done();
         }).catch(done);
     });
@@ -43,10 +41,6 @@ describe('SolidController', () => {
     it('should get all positions of geolocationapi', (done) => {
         controller.findAllPositions(session, 1000, 20, BASE_URI + "geolocationapi" as IriString).then(positions => {
             expect(positions.length).to.be.greaterThanOrEqual(1);
-            console.log(positions)
-            positions.forEach(position => {
-                expect(position.procedure.label).to.not.be.undefined;
-            });
             done();
         }).catch(done);
     });
@@ -71,7 +65,14 @@ describe('SolidController', () => {
             expect(positions.length).to.be.greaterThanOrEqual(1);
             done();
         }).catch(done);
-        
+    });
+
+    it('shoud get the latest position', (done) => {
+        controller.findAllPositions(session, undefined, 1).then(positions => {
+            expect(positions.length).to.equal(1);
+            console.log(positions[0])
+            done();
+        }).catch(done);     
     });
     
     it('should get all velocities', (done) => {
@@ -96,4 +97,9 @@ describe('SolidController', () => {
         }).catch(done);
     });
 
+    // it('should listen for changes', (done) => {
+    //     controller.listen().then(() => {
+    //         controller.on('newPosition', () => console.log("NEW"))
+    //     });
+    // }).timeout(1000000);
 });

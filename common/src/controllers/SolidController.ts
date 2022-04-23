@@ -7,7 +7,7 @@ import {
 } from '@openhps/rdf/serialization';
 import { vcard, ogc, ssn, foaf } from '@openhps/rdf/vocab';
 import type { Bindings } from '@openhps/rdf/sparql';
-import { SolidClientService, SolidDataDriver, } from '@openhps/solid/browser';
+import { SolidClientService, SolidDataDriver } from '@openhps/solid/browser';
 import {
     FeatureOfInterest, 
     PointGeometry, 
@@ -34,7 +34,6 @@ const wkt = require('wkt');
  */
 export class SolidController extends EventEmitter {
     public service: SolidClientService;
-    protected session: SolidSession;
     protected me: FeatureOfInterest;
     protected positionProperty: ObservableProperty;
     protected orientationProperty: ObservableProperty;
@@ -67,7 +66,7 @@ export class SolidController extends EventEmitter {
      * Check if the current session is logged in
      */
     get isLoggedIn() {
-        return this.session !== undefined && this.session.info.isLoggedIn;
+        return this.getSession() !== undefined && this.getSession().info.isLoggedIn;
     }
 
     /**
@@ -158,6 +157,39 @@ export class SolidController extends EventEmitter {
         }
         console.log("Created properties for", this.me.id);
         this.emit('ready');
+    }
+
+    /**
+     * Create a notification listener for changes to any properties
+     *
+     * @returns {Promise<void>} Promise of listener
+     */
+    listen(): Promise<void> {
+        return new Promise((resolve, reject) => {
+            const positionPropertyUri = this.getPropertyURI(this.getSession(), 'position');
+            const velocityPropertyUri = this.getPropertyURI(this.getSession(), 'velocity');
+            const orientationPropertyUri = this.getPropertyURI(this.getSession(), 'orientation');
+            this.service.getDatasetSubscription(this.getSession(), positionPropertyUri).then((subscription: any) => {
+                subscription.subscribe(velocityPropertyUri);
+                subscription.subscribe(orientationPropertyUri);
+                subscription.on('update', uri => {
+                    switch (uri.trim()) {
+                        case positionPropertyUri:
+                            this.emit("newPosition");
+                            break;
+                        case velocityPropertyUri:
+                            this.emit("newVelocity");
+                            break;
+                        case orientationPropertyUri:
+                            this.emit("newOrientation");
+                            break;
+                        default:
+                            break;
+                    }
+                });
+                resolve();
+            }).catch(reject);
+        });
     }
 
     /**
@@ -267,6 +299,8 @@ export class SolidController extends EventEmitter {
     findAllPositions(session: SolidSession, minAccuracy?: number, 
         limit: number = 20, procedure?: IriString | IriString[]): Promise<GeolocationPosition[]> {
         return new Promise((resolve, reject) => {
+            const source = this.getPropertyURI(this.getSession(), 'position');
+            this.driver.engine.invalidateHttpCache(source);
             this.driver.queryBindingsSolid(`
                 PREFIX geosparql: <http://www.opengis.net/ont/geosparql#>
                 PREFIX geof: <http://www.opengis.net/def/function/geosparql/>
@@ -277,35 +311,31 @@ export class SolidController extends EventEmitter {
 
                 SELECT ?posGeoJSON ?datetime ?accuracy ?procedure ?deployment
                 {
-                    ?profile a sosa:FeatureOfInterest ;
-                            ssn:hasProperty ?property .
-                    ?observation sosa:hasResult ?result ;
-                                sosa:observedProperty ?property ;
-                                sosa:resultTime ?datetime .
+                    ?observation sosa:observedProperty <${source}> ;
+                                sosa:resultTime ?datetime ;
+                                sosa:hasResult ?result .
                     OPTIONAL {
-                        ?result <${BASE_URI + "inDeployment"}> ?deployment .
+                        ?result <${BASE_URI}inDeployment> ?deployment .
                     }
                     OPTIONAL {
                         ?observation sosa:usedProcedure ?procedure .
                     }
-                    ?result a geosparql:Geometry ;
-                            geosparql:hasSpatialAccuracy ?spatialAccuracy ;
+                    ?result geosparql:hasSpatialAccuracy ?spatialAccuracy ;
                             geosparql:asWKT ?posWKT .
                     BIND(geof:asGeoJSON(?posWKT) AS ?posGeoJSON)
-                    {
-                        ?spatialAccuracy qudt:numericValue ?value ;
-                                        qudt:unit ?unit .
-                        OPTIONAL { ?unit qudt:conversionMultiplier ?multiplier }
-                        OPTIONAL { ?unit qudt:conversionOffset ?offset }
-                        BIND(COALESCE(?multiplier, 1) as ?multiplier)
-                        BIND(COALESCE(?offset, 0) as ?offset)
-                        BIND(((?value * ?multiplier) + ?offset) AS ?accuracy)
-                        ${minAccuracy ? `FILTER(?accuracy <= ${minAccuracy})` : ""}
-                    }
+                    ?spatialAccuracy qudt:numericValue ?value ;
+                                    qudt:unit ?unit .
+                    OPTIONAL { ?unit qudt:conversionMultiplier ?multiplier }
+                    OPTIONAL { ?unit qudt:conversionOffset ?offset }
+                    BIND(COALESCE(?multiplier, 1) as ?multiplier)
+                    BIND(COALESCE(?offset, 0) as ?offset)
+                    BIND(((?value * ?multiplier) + ?offset) AS ?accuracy)
+                    ${minAccuracy ? `FILTER(?accuracy <= ${minAccuracy})` : ""}
                     ${procedure ? `FILTER(${[...(Array.isArray(procedure) ? procedure : [procedure])]
                         .map(p => `?procedure = <${p}>`).join(" || ")})` : ""}
                 } ORDER BY DESC(?datetime) LIMIT ${limit}
             `, session, {
+                sources: [source],
                 httpProxyHandler: new ProxyHandlerStatic("https://proxy.linkeddatafragments.org/"),
                 extensionFunctions: {
                     // GeoSPARQL 1.1 specification is still in draft
@@ -323,15 +353,17 @@ export class SolidController extends EventEmitter {
                     const geoJSON = JSON.parse(binding.get("posGeoJSON").value);
                     if (geoJSON) {
                         const coordinates: Array<number> = geoJSON.coordinates;
+                        const altitude = coordinates.length === 3 ? coordinates[2] : undefined;
                         return {
                             latlng: coordinates.splice(0, 2),
-                            altitude: coordinates.length === 3 ? coordinates[2] : undefined,
+                            altitude,
                             timestamp: Date.parse(binding.get("datetime").value),
                             accuracy: Number(binding.get("accuracy").value),
-                            procedure: binding.get("procedure") ? 
+                            procedure: binding.get("procedure") && !procedure ? 
                                 await this.findProcedure(binding.get("procedure").value as IriString) : undefined,
                             deployment: binding.get("deployment") ? 
-                                await this.findDeployment(binding.get("deployment").value as IriString) : undefined,
+                                (procedure ? { uri: binding.get("deployment").value } : 
+                                await this.findDeployment(binding.get("deployment").value as IriString)) : undefined,
                         }
                     }
                 }));
@@ -350,6 +382,8 @@ export class SolidController extends EventEmitter {
      */
     findAllVelocities(session: SolidSession, limit: number = 20): Promise<GeolocationPosition[]> {
         return new Promise((resolve, reject) => {
+            const source = this.getPropertyURI(this.getSession(), 'velocity');
+            this.driver.engine.invalidateHttpCache(source);
             this.driver.queryBindingsSolid(`
                 PREFIX ssn: <http://www.w3.org/ns/ssn/>
                 PREFIX sosa: <http://www.w3.org/ns/sosa/>
@@ -358,11 +392,9 @@ export class SolidController extends EventEmitter {
                 PREFIX quantitykind: <http://qudt.org/vocab/quantitykind/>
 
                 SELECT ?speed ?datetime ?procedure {
-                    ?profile a sosa:FeatureOfInterest ;
-                            ssn:hasProperty ?property .
-                    ?observation sosa:hasResult ?result ;
-                                sosa:observedProperty ?property ;
-                                sosa:resultTime ?datetime .
+                    ?observation sosa:observedProperty <${source}> ;
+                                sosa:resultTime ?datetime ;
+                                sosa:hasResult ?result .
                     OPTIONAL {
                         ?observation sosa:usedProcedure ?procedure .
                     }
@@ -374,6 +406,7 @@ export class SolidController extends EventEmitter {
                     { ?unit qudt:hasQuantityKind quantitykind:Speed }
                 } ORDER BY DESC(?datetime) LIMIT ${limit}
             `, session, {
+                sources: [source],
                 httpProxyHandler: new ProxyHandlerStatic("https://proxy.linkeddatafragments.org/"),
             }).then(bindings => {
                 return Promise.all(bindings.map(async (binding: Bindings) => ({
@@ -399,6 +432,8 @@ export class SolidController extends EventEmitter {
      */
     findAllOrientations(session: SolidSession, limit: number = 20): Promise<GeolocationPosition[]> {
         return new Promise((resolve, reject) => {
+            const source = this.getPropertyURI(this.getSession(), 'orientation');
+            this.driver.engine.invalidateHttpCache(source);
             this.driver.queryBindingsSolid(`
                 PREFIX ssn: <http://www.w3.org/ns/ssn/>
                 PREFIX sosa: <http://www.w3.org/ns/sosa/>
@@ -407,11 +442,9 @@ export class SolidController extends EventEmitter {
                 PREFIX quantitykind: <http://qudt.org/vocab/quantitykind/>
 
                 SELECT ?heading ?datetime ?procedure {
-                    ?profile a sosa:FeatureOfInterest ;
-                            ssn:hasProperty ?property .
-                    ?observation sosa:hasResult ?result ;
-                                sosa:observedProperty ?property ;
-                                sosa:resultTime ?datetime .
+                    ?observation sosa:observedProperty <${source}> ;
+                                sosa:resultTime ?datetime ;
+                                sosa:hasResult ?result .
                     OPTIONAL {
                         ?observation sosa:usedProcedure ?procedure .
                     }
@@ -421,6 +454,7 @@ export class SolidController extends EventEmitter {
                     ?unit qudt:hasQuantityKind quantitykind:Angle .
                 } ORDER BY DESC(?datetime) LIMIT ${limit}
             `, session, {
+                sources: [source],
                 httpProxyHandler: new ProxyHandlerStatic("https://proxy.linkeddatafragments.org/"),
             }).then(bindings => {
                 return Promise.all(bindings.map(async (binding: Bindings) => ({
@@ -451,11 +485,11 @@ export class SolidController extends EventEmitter {
         position.longitude = data.lnglat[0];
         position.altitude = data.altitude;
         position.spatialAccuracy = accuracy;
+        if (data.deployment && data.deployment.uri)
+            position.inDeployment = data.deployment.uri;
         observation.results.push(position);
         if (data.procedure && data.procedure.uri)
             observation.usedProcedures.push(data.procedure.uri);
-        if (data.deployment && data.deployment.uri)
-            observation.definedBy = data.deployment.uri;
         await this.service.setThing(session, RDFSerializer.serializeToSubjects(observation)[0]);
     }
     
@@ -471,8 +505,6 @@ export class SolidController extends EventEmitter {
         observation.results.push(value);
         if (data.procedure && data.procedure.uri)
             observation.usedProcedures.push(data.procedure.uri);
-        if (data.deployment && data.deployment.uri)
-            observation.definedBy = data.deployment.uri;
         await this.service.setThing(session, RDFSerializer.serializeToSubjects(observation)[0]);
     }
 
@@ -488,8 +520,6 @@ export class SolidController extends EventEmitter {
         observation.results.push(value);
         if (data.procedure && data.procedure.uri)
             observation.usedProcedures.push(data.procedure.uri);
-        if (data.deployment && data.deployment.uri)
-            observation.definedBy = data.deployment.uri;
         await this.service.setThing(session, RDFSerializer.serializeToSubjects(observation)[0]);
     }
 }

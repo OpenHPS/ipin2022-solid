@@ -121,7 +121,9 @@ export default {
       if (this.controller.isLoggedIn) {
         this.controller.updatePosition({
           heading,
-          procedure: PROCEDURE
+          procedure: {
+            uri: PROCEDURE
+          }
         });
       }
     },

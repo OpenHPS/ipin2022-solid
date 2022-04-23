@@ -56,7 +56,7 @@ Object.keys(Spaces).forEach(key => {
         };
     });
     if (space.parentUID) {
-        deployment.within = `${BASE_URI}${space.parentUID}`;
+        deployment.within = new Deployment(`${BASE_URI}${space.parentUID}`);
     }
 
     // Serialize deployment to turtle and add to tracking.ttl file

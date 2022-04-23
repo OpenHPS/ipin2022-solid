@@ -5,6 +5,7 @@ import { Geometry } from "./Geometry";
 
 @SerializableObject({
     rdf: {
+        type: ogc.Geometry,
         serializer: (geometry: PolygonGeometry) => {
             return {
                 predicates: {

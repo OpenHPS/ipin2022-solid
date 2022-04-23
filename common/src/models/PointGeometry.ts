@@ -1,10 +1,13 @@
-import { SerializableObject } from "@openhps/core";
+import { SerializableMember, SerializableObject } from "@openhps/core";
+import { IriString, Thing } from "@openhps/rdf/serialization";
 import { ogc } from "@openhps/rdf/vocab";
 import { DataFactory } from 'n3';
+import { BASE_URI } from "./constants";
 import { Geometry } from "./Geometry";
 
 @SerializableObject({
     rdf: {
+        type: ogc.Geometry,
         serializer: (geometry: PointGeometry) => {
             return {
                 predicates: {
@@ -25,4 +28,13 @@ export class PointGeometry extends Geometry {
     latitude: number;
     longitude: number;
     altitude: number;
+
+    @SerializableMember({
+        rdf: {
+            predicate: `${BASE_URI}inDeployment`,
+            serializer: (value: string) => (DataFactory.namedNode(value)),
+            deserializer: (thing: Thing) => thing.value
+        }
+    })
+    inDeployment: IriString;
 }
