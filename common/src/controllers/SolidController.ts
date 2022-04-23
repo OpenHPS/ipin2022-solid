@@ -359,8 +359,9 @@ export class SolidController extends EventEmitter {
                             altitude,
                             timestamp: Date.parse(binding.get("datetime").value),
                             accuracy: Number(binding.get("accuracy").value),
-                            procedure: binding.get("procedure") && !procedure ? 
-                                await this.findProcedure(binding.get("procedure").value as IriString) : undefined,
+                            procedure: binding.get("procedure") ? 
+                                (procedure ? { uri: binding.get("procedure").value as IriString } :
+                                await this.findProcedure(binding.get("procedure").value as IriString)) : undefined,
                             deployment: binding.get("deployment") ? 
                                 (procedure ? { uri: binding.get("deployment").value } : 
                                 await this.findDeployment(binding.get("deployment").value as IriString)) : undefined,

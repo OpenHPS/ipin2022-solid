@@ -2,6 +2,7 @@
   <div class="map">
     <MenuComponent :controller="controller" :title="title" />
     <VlMap
+      v-if="controller && controller.isLoggedIn"
       ref="map"
       data-projection="EPSG:4326"
       @created="onMapCreated"
@@ -15,28 +16,17 @@
         <VlSourceOsm />
       </VlLayerTile>
 
-      <VlGeoloc 
-        @update:accuracy="position.accuracy = $event"
-        @update:altitude="onUpdateAltitude"
-        @update:altitudeaccuracy="position.altitudeAccuracy = $event"
-        @update:heading="onUpdateHeading"
-        @update:speed="onUpdateSpeed"
-        @update:position="onUpdatePosition"
-        @tracking-options="trackingOptions">
-        <template #default="geoloc">
-          <VlFeature
-            v-if="geoloc.position"
-            id="position-feature">
-            <VlGeomPoint :coordinates="geoloc.position"/>
-            <VlStyle>
-              <VlStyleIcon
-                src="../assets/marker.png"
-                :scale="0.4"
-                :anchor="[0.5, 1]"/>
-            </VlStyle>
-          </VlFeature>
-        </template>
-      </VlGeoloc>
+      <VlFeature
+        v-if="position"
+        id="position-feature">
+        <VlGeomPoint :coordinates="position.lnglat"/>
+        <VlStyle>
+          <VlStyleIcon
+            src="../assets/marker.png"
+            :scale="0.4"
+            :anchor="[0.5, 1]"/>
+        </VlStyle>
+      </VlFeature>
 
     </VlMap>
     <LoginModal :controller="controller" />
@@ -89,6 +79,14 @@ export default {
       });
     });
   },
+  mounted() {
+    navigator.geolocation.watchPosition(this.onUpdatePosition.bind(this), 
+      console.error, 
+      {
+        enableHighAccuracy: true,
+        maximumAge: 5000
+      });
+  },
   methods: {
     onMapCreated(vm) {
       this.map = vm;
@@ -97,41 +95,25 @@ export default {
         new FullScreen(),
       ]);
     },
-    onUpdatePosition(position) {
-      this.position.lnglat = position;
-      this.center = position;
+    onUpdatePosition(event) {
+      // Extract information from event
+      this.position.lnglat = [event.coords.longitude, event.coords.latitude];
+      this.position.accuracy = event.coords.accuracy;
+      this.position.altitude = event.coords.altitude;
+      this.position.altitudeAccuracy = event.coords.altitudeAccuracy;
+      this.position.speed = event.coords.speed;
+      this.position.heading = event.coords.heading;
+
+      // Update the map view
+      this.center = this.position.lnglat;
       this.zoom = 16;
+
       if (this.controller.isLoggedIn) {
         this.controller.updatePosition({
           lnglat: this.position.lnglat,
           altitude: this.position.altitude,
           accuracy: this.position.accuracy,
           altitudeAccuracy: this.position.altitudeAccuracy,
-          procedure: {
-            uri: PROCEDURE
-          }
-        });
-      }
-    },
-    onUpdateAltitude(altitude) {
-      this.position.altitude = altitude;
-    },
-    onUpdateHeading(heading) {
-      this.position.heading = heading;
-      if (this.controller.isLoggedIn) {
-        this.controller.updatePosition({
-          heading,
-          procedure: {
-            uri: PROCEDURE
-          }
-        });
-      }
-    },
-    onUpdateSpeed(speed) {
-      this.position.speed = speed;
-      if (this.controller.isLoggedIn) {
-        this.controller.updatePosition({
-          speed,
           procedure: {
             uri: PROCEDURE
           }

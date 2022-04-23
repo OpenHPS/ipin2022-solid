@@ -47,7 +47,11 @@
                     {{ props.row.heading }}
                 </b-table-column>
                 <b-table-column field="system" label="System" v-slot="props">
-                    {{ props.row.system.label }}
+                    <b-tooltip :label="props.row.system.comments"
+                        type="is-primary is-light"
+                        position="is-bottom" dashed>
+                        {{ props.row.system.label }}
+                    </b-tooltip>
                 </b-table-column>
             </b-table>
         </b-tab-item>
@@ -65,7 +69,11 @@
                     {{ props.row.speed }}
                 </b-table-column>
                 <b-table-column field="system" label="System" v-slot="props">
-                    {{ props.row.system.label }}
+                    <b-tooltip :label="props.row.system.comments"
+                        type="is-primary is-light"
+                        position="is-bottom" dashed>
+                        {{ props.row.system.label }}
+                    </b-tooltip>
                 </b-table-column>
             </b-table>
         </b-tab-item>
@@ -215,10 +223,13 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
+<style>
 .app {
   position: relative;
   width: 100%;
   height: 100%;
+}
+.loading-overlay.is-active {
+    min-height: 200px;
 }
 </style>
