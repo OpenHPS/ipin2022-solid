@@ -70,7 +70,6 @@ describe('SolidController', () => {
     it('shoud get the latest position', (done) => {
         controller.findAllPositions(session, undefined, 1).then(positions => {
             expect(positions.length).to.equal(1);
-            console.log(positions[0])
             done();
         }).catch(done);     
     });
