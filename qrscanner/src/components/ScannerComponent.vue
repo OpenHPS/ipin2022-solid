@@ -84,6 +84,9 @@ export default {
           altitude: position.altitude,
           procedure: {
             uri: procedure
+          },
+          deployment: {
+            uri: BASE_URI + space.uid
           }
         });
       }).catch(err => {
