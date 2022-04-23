@@ -1,5 +1,5 @@
 import { SerializableArrayMember, SerializableMember, SerializableObject } from "@openhps/core";
-import { sosa } from "@openhps/rdf/vocab";
+import { sosa, rdfs } from "@openhps/rdf/vocab";
 import { FeatureOfInterest } from "./FeatureOfInterest";
 import { ObservableProperty } from "./ObservableProperty";
 import { SerializableNamedNode, xsd, IriString, Thing, DataFactory } from "@openhps/rdf/serialization";
@@ -47,4 +47,11 @@ export class Observation extends SerializableNamedNode {
         }
     })
     usedProcedures: IriString[] = [];
+
+    @SerializableMember({
+        rdf: {
+            predicate: rdfs.isDefinedBy
+        }
+    })
+    definedBy: IriString;
 }

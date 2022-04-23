@@ -1,34 +1,72 @@
 <template>
   <div class="app">
     <MenuComponent :controller="controller" :title="title" />
-    <b-tabs>
-        <b-tab-item label="Position">
+    <b-tabs
+        expanded
+    >
+        <b-tab-item icon="fas fa-map-marker" label="Position">
             <b-table 
                 :striped="true" 
                 :narrowed="true"
                 :loading="loading.positions"
-                :data="observations.positions" 
-                :columns="columns.positions">
+                :data="observations.positions">
+                <b-table-column field="datetime" width="180" label="Date" v-slot="props">
+                    {{ props.row.datetime }}
+                </b-table-column>
+                <b-table-column width="200" field="position" label="Coordinates" v-slot="props">
+                    <b-button style="width: 100%" size="is-small" @click="openMap(props.row._raw)">
+                        {{ props.row.latitude }}, {{ props.row.longitude }}
+                    </b-button>
+                </b-table-column>
+                <b-table-column field="altitude" label="Altitude" v-slot="props">
+                    {{ props.row.altitude }}
+                </b-table-column>
+                <b-table-column field="accuracy" label="Accuracy" v-slot="props">
+                    {{ props.row.accuracy }}
+                </b-table-column>
+                <b-table-column field="system" label="System" v-slot="props">
+                    <b-tooltip :label="props.row.system.comments"
+                        type="is-primary is-light"
+                        position="is-bottom">
+                        {{ props.row.system.label }}
+                    </b-tooltip>
+                </b-table-column>
             </b-table>
         </b-tab-item>
 
-        <b-tab-item label="Orientation">
+        <b-tab-item icon="fas fa-compass" label="Orientation">
             <b-table 
                 :striped="true"
                 :narrowed="true"
                 :loading="loading.orientations"
-                :data="observations.orientations" 
-                :columns="columns.orientations">
+                :data="observations.orientations">
+                <b-table-column field="datetime" width="180" label="Date" v-slot="props">
+                    {{ props.row.datetime }}
+                </b-table-column>
+                <b-table-column field="heading" label="Heading (degrees)" v-slot="props">
+                    {{ props.row.heading }}
+                </b-table-column>
+                <b-table-column field="system" label="System" v-slot="props">
+                    {{ props.row.system.label }}
+                </b-table-column>
             </b-table>
         </b-tab-item>
 
-        <b-tab-item label="Velocity">
+        <b-tab-item icon="fas fa-tachometer" label="Velocity">
             <b-table 
                 :striped="true" 
                 :narrowed="true"
                 :loading="loading.velocities"
-                :data="observations.velocities" 
-                :columns="columns.velocities">
+                :data="observations.velocities">
+                <b-table-column field="datetime" width="180" label="Date" v-slot="props">
+                    {{ props.row.datetime }}
+                </b-table-column>
+                <b-table-column field="speed" label="Speed" v-slot="props">
+                    {{ props.row.speed }}
+                </b-table-column>
+                <b-table-column field="system" label="System" v-slot="props">
+                    {{ props.row.system.label }}
+                </b-table-column>
             </b-table>
         </b-tab-item>
     </b-tabs>
@@ -39,6 +77,7 @@
 <script>
 import { LoginModal, MenuComponent } from 'ipin2022-components';
 import { SolidController } from 'ipin2022-common';
+import MapModalComponent from './MapModalComponent.vue';
 
 export default {
   name: 'MainPage',
@@ -54,62 +93,6 @@ export default {
             positions: true,
             velocities: true,
             orientations: true
-        },
-        columns: {
-            positions: [
-                {
-                    field: 'datetime',
-                    label: 'Date',
-                },
-                {
-                    field: 'latitude',
-                    label: 'Latitude',
-                },
-                {
-                    field: 'longitude',
-                    label: 'Longitude',
-                },
-                {
-                    field: 'altitude',
-                    label: 'Altitude',
-                },
-                {
-                    field: 'accuracy',
-                    label: 'Accuracy',
-                },
-                {
-                    field: 'system',
-                    label: 'System',
-                }
-            ],
-            orientations: [
-                {
-                    field: 'datetime',
-                    label: 'Date',
-                },
-                {
-                    field: 'heading',
-                    label: 'Heading (degrees)',
-                },
-                {
-                    field: 'system',
-                    label: 'System',
-                }
-            ],
-            velocities: [
-                {
-                    field: 'datetime',
-                    label: 'Date',
-                },
-                {
-                    field: 'speed',
-                    label: 'Speed',
-                },
-                {
-                    field: 'system',
-                    label: 'System',
-                }
-            ]
         },
         observations: {
             positions: [],
@@ -129,18 +112,27 @@ export default {
     });
   },
   methods: {
+    openMap(position) {
+        this.$buefy.modal.open({
+            parent: this,
+            component: MapModalComponent,
+            hasModalCard: true,
+            props: { position }
+        });
+    },
     loadPositions() {
         this.loading.positions = true;
         this.controller.findAllPositions(this.controller.getSession(), 50).then(positions => {
             this.loading.positions = false;
             this.observations.positions = positions
                 .map(position => ({
-                    datetime: new Date(position.timestamp).toTimeString(),
-                    longitude: position.latlng[0],
-                    latitude: position.latlng[1],
-                    altitude: position.altitude ? position.altitude : "",
-                    accuracy: position.accuracy ? position.accuracy + " m" : "",
-                    system: position.procedure ? position.procedure : ""
+                    datetime: this.formatDate(new Date(position.timestamp)),
+                    longitude: this.formatDegrees(position.latlng[0], true),
+                    latitude: this.formatDegrees(position.latlng[1], false),
+                    altitude: position.altitude ? this.formatNumber(position.altitude, 2) : "",
+                    accuracy: position.accuracy ? this.formatNumber(position.accuracy, 2) + " m" : "",
+                    system: position.procedure ? position.procedure : {},
+                    _raw: position
                 }));
         }).catch(console.error);
     },
@@ -150,9 +142,10 @@ export default {
             this.loading.orientations = false;
             this.observations.orientations = orientations
                 .map(orientation => ({
-                    datetime: new Date(orientation.timestamp).toTimeString(),
-                    heading: orientation.heading,
-                    system: orientation.procedure ? orientation.procedure : ""
+                    datetime: this.formatDate(new Date(orientation.timestamp)),
+                    heading: this.formatNumber(orientation.heading, 2) + "\u00b0",
+                    system: orientation.procedure ? orientation.procedure : {},
+                    _raw: orientation
                 }));
         }).catch(console.error);
     },
@@ -162,11 +155,32 @@ export default {
             this.loading.velocities = false;
             this.observations.velocities = velocities
                 .map(velocity => ({
-                    datetime: new Date(velocity.timestamp).toTimeString(),
-                    speed: velocity.speed + " m/s",
-                    system: velocity.procedure ? velocity.procedure : ""
+                    datetime: this.formatDate(new Date(velocity.timestamp)),
+                    speed: this.formatNumber(velocity.speed, 2) + " m/s",
+                    system: velocity.procedure ? velocity.procedure : {},
+                    _raw: velocity
                 }));
         }).catch(console.error);
+    },
+    formatDate(date) {
+        return date.toLocaleDateString() + " " + date.toLocaleTimeString();
+    },
+    formatNumber(number, decimals) {
+        const pow = Math.pow(10, decimals);
+        return Math.round(number * pow) / pow;
+    },
+    /**
+     * Format DD to DMS
+     * @see {@link https://stackoverflow.com/questions/5786025/decimal-degrees-to-degrees-minutes-and-seconds-in-javascript}
+     */
+    formatDegrees(D, lng) {
+        const dms = {
+            dir: D < 0 ? (lng ? "W" : "S") : lng ? "E" : "N",
+            deg: 0 | (D < 0 ? (D = -D) : D),
+            min: 0 | (((D += 1e-9) % 1) * 60),
+            sec: (0 | (((D * 60) % 1) * 6000)) / 100,
+        };
+        return `${dms.deg}\u00b0 ${dms.min}' ${dms.sec}'' ${dms.dir}`;
     }
   },
 }

@@ -22,13 +22,13 @@
 
 <script>
 import { LoginModal, MenuComponent } from 'ipin2022-components';
-import { SolidController, BuildingController } from 'ipin2022-common';
+import { SolidController, BuildingController, BASE_URI } from 'ipin2022-common';
 import { QrcodeStream } from 'vue-qrcode-reader';
 import beepOK from '../assets/beep-02.mp3';
 import beepERR from '../assets/beep-03.mp3';
 
-const PROCEDURE_CHECK_IN = "qrscanner_checkin";
-const PROCEDURE_CHECK_OUT = "qrscanner_checkout";
+const PROCEDURE_CHECK_IN = BASE_URI + "qrscanner_checkin";
+const PROCEDURE_CHECK_OUT = BASE_URI + "qrscanner_checkout";
 
 export default {
   name: 'ScannerComponent',
@@ -57,25 +57,35 @@ export default {
     onDecode(event) {
       // Get the first detected code
       this.buildingController.findByURI(event).then(space => {
+        this.qr = space.displayName;
+        new Audio(beepOK).play(); // Beep sound for OK
+        this.camera = 'off';
         // Check if check in or check out
-        // this.controller.findAllPositions(
-        //   this.controller.getSession(),
-        //   undefined,
-        //   1,
-        //   [PROCEDURE_CHECK_IN, PROCEDURE_CHECK_OUT]
-        // ).then(positions => {
-        //   if (positions.)
-        // });
+        return Promise.all([space, this.controller.findAllPositions(
+          this.controller.getSession(),
+          undefined,
+          1,
+          [PROCEDURE_CHECK_IN, PROCEDURE_CHECK_OUT]
+        )]);
+      }).then(([space, positions]) => {
+        let procedure = PROCEDURE_CHECK_IN;
+        if (positions.length > 0) {
+          const lastPosition = positions[0];
+          // Check out if the last position was a check in in the same space
+          if (lastPosition.procedure && lastPosition.procedure.uri === PROCEDURE_CHECK_IN && 
+            lastPosition.deployment && lastPosition.deployment.uri.indexOf(space.uid) !== -1) {
+            procedure = PROCEDURE_CHECK_OUT;
+          }
+        }
         const position = this.buildingController.getGeographicalPosition(space);
         this.controller.updatePosition({
           lnglat: [position.longitude, position.latitude],
           accuracy: position.accuracy.value,
           altitude: position.altitude,
-          procedure: PROCEDURE_CHECK_IN
+          procedure: {
+            uri: procedure
+          }
         });
-        this.qr = space.displayName;
-        new Audio(beepOK).play(); // Beep sound for OK
-        this.camera = 'off';
       }).catch(err => {
         console.error(err);
         this.qr = undefined;

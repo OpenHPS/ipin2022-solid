@@ -1,9 +1,9 @@
 import 'mocha';
 import { expect } from 'chai';
-import { SolidController, QuantityValue } from '../../src/';
+import { SolidController, QuantityValue, BASE_URI } from '../../src/';
 import { Session } from '@inrupt/solid-client-authn-node';
 import { LengthUnit } from '@openhps/core';
-import { RDFSerializer } from '@openhps/rdf/serialization';
+import { RDFSerializer, IriString } from '@openhps/rdf/serialization';
 
 describe('SolidController', () => {
     const controller: SolidController = new SolidController("test");
@@ -30,21 +30,47 @@ describe('SolidController', () => {
         }).catch(done);
     });
     
-    it('should get all positions of a specific procedure', (done) => {
-        controller.findAllPositions(session, 1000, 20, "qrscanner_checkin").then(positions => {
+    it('should get all positions of qrscanner', (done) => {
+        controller.findAllPositions(session, 1000, 20, BASE_URI + "qrscanner_checkin" as IriString).then(positions => {
             expect(positions.length).to.be.greaterThanOrEqual(1);
             positions.forEach(position => {
-                expect(position.procedure).to.equal("QR-scanner Check-in");
+                expect(position.procedure.label).to.equal("QR-scanner Check-in");
+            });
+            done();
+        }).catch(done);
+    });
+
+    it('should get all positions of geolocationapi', (done) => {
+        controller.findAllPositions(session, 1000, 20, BASE_URI + "geolocationapi" as IriString).then(positions => {
+            expect(positions.length).to.be.greaterThanOrEqual(1);
+            positions.forEach(position => {
+                expect(position.procedure.label).to.not.be.undefined;
             });
             done();
         }).catch(done);
     });
 
     it('should get all positions of a specific array of procedures', (done) => {
-        controller.findAllPositions(session, 1000, 20, ["qrscanner_checkin", "geolocationapi"]).then(positions => {
+        controller.findAllPositions(session, 1000, 20, [
+            BASE_URI + "qrscanner_checkin" as IriString,
+            BASE_URI + "geolocationapi" as IriString
+        ]).then(positions => {
             expect(positions.length).to.be.greaterThanOrEqual(3);
             done();
         }).catch(done);
+    });
+
+    it('shoud get 1 position fast', (done) => {
+        const PROCEDURE_CHECK_IN = BASE_URI + "qrscanner_checkin" as IriString;
+        const PROCEDURE_CHECK_OUT = BASE_URI + "qrscanner_checkout" as IriString;
+        controller.findAllPositions(session, undefined, 1, [
+            PROCEDURE_CHECK_IN,
+            PROCEDURE_CHECK_OUT
+        ]).then(positions => {
+            expect(positions.length).to.be.greaterThanOrEqual(1);
+            done();
+        }).catch(done);
+        
     });
     
     it('should get all velocities', (done) => {

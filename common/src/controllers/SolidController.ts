@@ -164,13 +164,14 @@ export class SolidController extends EventEmitter {
      * Update the position of a user
      *
      * @param {GeolocationPosition} data Position
-     * @returns 
      */
     async updatePosition(data: GeolocationPosition) {
         const session = this.getSession();
         if (session === undefined) {
             return;
         }
+        
+        console.debug("Updating position", data);
 
         if (data.lnglat)
             this.createPosition(session, data);
@@ -180,78 +181,163 @@ export class SolidController extends EventEmitter {
             this.createVelocity(session, data);
     }
 
+    findDeployment(deploymentUri: IriString): Promise<any> {
+        return new Promise((resolve, reject) => {
+            this.driver.queryBindings(`
+                PREFIX geosparql: <http://www.opengis.net/ont/geosparql#>
+                PREFIX geof: <http://www.opengis.net/def/function/geosparql/>
+                PREFIX ssn: <http://www.w3.org/ns/ssn/>
+                PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+                SELECT ?deploymentLabel ?deploymentGeometryJSON {
+                    <${deploymentUri}> a geosparql:SpatialObject ;
+                                a ssn:Deployment ;
+                                rdfs:label ?deploymentLabel ;
+                                geosparql:hasGeometry ?deploymentGeometry .
+                    ?deploymentGeometry a geosparql:Geometry ;
+                                geosparql:asWKT ?deploymentGeometryWKT .
+                    BIND(geof:asGeoJSON(?deploymentGeometryWKT) AS ?deploymentGeometryJSON)
+                } LIMIT 1
+            `, {
+                sources: [deploymentUri],
+                httpProxyHandler: new ProxyHandlerStatic("https://proxy.linkeddatafragments.org/"),
+                extensionFunctions: {
+                    // GeoSPARQL 1.1 specification is still in draft
+                    // this is the implementation of the asGeoJSON function in the proposal
+                    'http://www.opengis.net/def/function/geosparql/asGeoJSON'(args: Term[]) {
+                        const wktLiteral = args[0];
+                        const pattern = /^<(https?:\/\/.*)>/g;
+                        let wktString: string = wktLiteral.value.replace(pattern, "").replace("\n", "").trim();
+                        const geoJSON = wkt.parse(wktString);
+                        return DataFactory.literal(JSON.stringify(geoJSON), ogc.geoJSONLiteral);
+                    }
+                } as any
+            }).then(bindings => {
+                const results = bindings.map((binding: Bindings) => {
+                    return {
+                        uri: deploymentUri,
+                        label: binding.get("deploymentLabel") ? binding.get("deploymentLabel").value : undefined,
+                        geometry: binding.get("deploymentGeometryJSON") ? 
+                            JSON.parse(binding.get("deploymentGeometryJSON").value).coordinates : undefined,
+                    };
+                }).filter(d => d !== undefined);
+                resolve(results.length > 0 ? results[0] : undefined);
+            }).catch(reject);
+        });
+    }
+
+    findProcedure(procedureUri: IriString): Promise<any> {
+        return new Promise((resolve, reject) => {
+            console.log(procedureUri)
+            this.driver.queryBindings(`
+                PREFIX sosa: <http://www.w3.org/ns/sosa/>
+                PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+                PREFIX ssn: <http://www.w3.org/ns/ssn/>
+
+                SELECT ?procedureLabel ?procedureComment {
+                    <${procedureUri}> rdfs:label ?procedureLabel ;
+                                    rdfs:comment ?procedureComment .
+                } LIMIT 1
+            `, {
+                sources: [procedureUri],
+                httpProxyHandler: new ProxyHandlerStatic("https://proxy.linkeddatafragments.org/"),
+            }).then(bindings => {
+                const results = bindings.map((binding: Bindings) => {
+                    return {
+                        uri: procedureUri,
+                        label: binding.get("procedureLabel") ? binding.get("procedureLabel").value : undefined,
+                        comments: binding.get("procedureComment") ? binding.get("procedureComment").value : undefined,
+                    };
+                }).filter(p => p !== undefined);
+                resolve(results.length > 0 ? results[0] : undefined);
+            }).catch(reject);
+        });
+    }
+
     /**
      * Find all positions
      *
      * @param {SolidSession} session Solid Pod to get positions for
      * @param {number} [minAccuracy] Minimum accuracy
      * @param {number} [limit] Amount of positions to fetch 
-     * @param {string | string[]} [procedure] Optional filter on the procedure used
+     * @param {IriString | IriString[]} [procedure] Optional filter on the procedure used
      * @returns {Promise<GeolocationPosition[]>} Promise of geolocation interface with position
      */
-    async findAllPositions(session: SolidSession, minAccuracy?: number, limit: number = 20, procedure?: string | string[]): Promise<GeolocationPosition[]> {
-        const bindings = await this.driver.queryBindingsSolid(`
-            PREFIX geosparql: <http://www.opengis.net/ont/geosparql#>
-            PREFIX geof: <http://www.opengis.net/def/function/geosparql/>
-            PREFIX ssn: <http://www.w3.org/ns/ssn/>
-            PREFIX sosa: <http://www.w3.org/ns/sosa/>
-            PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-            PREFIX qudt: <http://qudt.org/schema/qudt/>
+    findAllPositions(session: SolidSession, minAccuracy?: number, 
+        limit: number = 20, procedure?: IriString | IriString[]): Promise<GeolocationPosition[]> {
+        return new Promise((resolve, reject) => {
+            this.driver.queryBindingsSolid(`
+                PREFIX geosparql: <http://www.opengis.net/ont/geosparql#>
+                PREFIX geof: <http://www.opengis.net/def/function/geosparql/>
+                PREFIX ssn: <http://www.w3.org/ns/ssn/>
+                PREFIX sosa: <http://www.w3.org/ns/sosa/>
+                PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+                PREFIX qudt: <http://qudt.org/schema/qudt/>
 
-            SELECT ?posGeoJSON ?datetime ?accuracy ?procedureLabel {
-                ?profile a sosa:FeatureOfInterest ;
-                        ssn:hasProperty ?property .
-                ?observation sosa:hasResult ?result ;
-                            sosa:observedProperty ?property ;
-                            sosa:resultTime ?datetime .
-                OPTIONAL {
-                    ?observation sosa:usedProcedure ?procedure .
-                    ?procedure rdfs:label ?procedureLabel .
-                }
-                ?result a geosparql:Geometry ;
-                        geosparql:hasSpatialAccuracy ?spatialAccuracy ;
-                        geosparql:asWKT ?posWKT .
-                BIND(geof:asGeoJSON(?posWKT) AS ?posGeoJSON)
+                SELECT ?posGeoJSON ?datetime ?accuracy ?procedure ?deployment
                 {
-                    ?spatialAccuracy qudt:numericValue ?value ;
-                                    qudt:unit ?unit .
-                    OPTIONAL { ?unit qudt:conversionMultiplier ?multiplier }
-                    OPTIONAL { ?unit qudt:conversionOffset ?offset }
-                    BIND(COALESCE(?multiplier, 1) as ?multiplier)
-                    BIND(COALESCE(?offset, 0) as ?offset)
-                    BIND(((?value * ?multiplier) + ?offset) AS ?accuracy)
-                    ${minAccuracy ? `FILTER(?accuracy <= ${minAccuracy})` : ""}
-                }
-                ${procedure ? `FILTER(${[...(Array.isArray(procedure) ? procedure : [procedure])]
-                    .map(p => `?procedure = <${BASE_URI}${p}>`).join(" || ")})` : ""}
-            } ORDER BY DESC(?datetime) LIMIT ${limit}
-        `, session, {
-            httpProxyHandler: new ProxyHandlerStatic("https://proxy.linkeddatafragments.org/"),
-            extensionFunctions: {
-                // GeoSPARQL 1.1 specification is still in draft
-                // this is the implementation of the asGeoJSON function in the proposal
-                'http://www.opengis.net/def/function/geosparql/asGeoJSON'(args: Term[]) {
-                    const wktLiteral = args[0];
-                    const pattern = /^<(https?:\/\/.*)>/g;
-                    let wktString: string = wktLiteral.value.replace(pattern, "").replace("\n", "").trim();
-                    const geoJSON = wkt.parse(wktString);
-                    return DataFactory.literal(JSON.stringify(geoJSON), ogc.geoJSONLiteral);
-                }
-            } as any
+                    ?profile a sosa:FeatureOfInterest ;
+                            ssn:hasProperty ?property .
+                    ?observation sosa:hasResult ?result ;
+                                sosa:observedProperty ?property ;
+                                sosa:resultTime ?datetime .
+                    OPTIONAL {
+                        ?result <${BASE_URI + "inDeployment"}> ?deployment .
+                    }
+                    OPTIONAL {
+                        ?observation sosa:usedProcedure ?procedure .
+                    }
+                    ?result a geosparql:Geometry ;
+                            geosparql:hasSpatialAccuracy ?spatialAccuracy ;
+                            geosparql:asWKT ?posWKT .
+                    BIND(geof:asGeoJSON(?posWKT) AS ?posGeoJSON)
+                    {
+                        ?spatialAccuracy qudt:numericValue ?value ;
+                                        qudt:unit ?unit .
+                        OPTIONAL { ?unit qudt:conversionMultiplier ?multiplier }
+                        OPTIONAL { ?unit qudt:conversionOffset ?offset }
+                        BIND(COALESCE(?multiplier, 1) as ?multiplier)
+                        BIND(COALESCE(?offset, 0) as ?offset)
+                        BIND(((?value * ?multiplier) + ?offset) AS ?accuracy)
+                        ${minAccuracy ? `FILTER(?accuracy <= ${minAccuracy})` : ""}
+                    }
+                    ${procedure ? `FILTER(${[...(Array.isArray(procedure) ? procedure : [procedure])]
+                        .map(p => `?procedure = <${p}>`).join(" || ")})` : ""}
+                } ORDER BY DESC(?datetime) LIMIT ${limit}
+            `, session, {
+                httpProxyHandler: new ProxyHandlerStatic("https://proxy.linkeddatafragments.org/"),
+                extensionFunctions: {
+                    // GeoSPARQL 1.1 specification is still in draft
+                    // this is the implementation of the asGeoJSON function in the proposal
+                    'http://www.opengis.net/def/function/geosparql/asGeoJSON'(args: Term[]) {
+                        const wktLiteral = args[0];
+                        const pattern = /^<(https?:\/\/.*)>/g;
+                        let wktString: string = wktLiteral.value.replace(pattern, "").replace("\n", "").trim();
+                        const geoJSON = wkt.parse(wktString);
+                        return DataFactory.literal(JSON.stringify(geoJSON), ogc.geoJSONLiteral);
+                    }
+                } as any
+            }).then(async bindings => {
+                return Promise.all(bindings.map(async (binding: Bindings) => {
+                    const geoJSON = JSON.parse(binding.get("posGeoJSON").value);
+                    if (geoJSON) {
+                        const coordinates: Array<number> = geoJSON.coordinates;
+                        return {
+                            latlng: coordinates.splice(0, 2),
+                            altitude: coordinates.length === 3 ? coordinates[2] : undefined,
+                            timestamp: Date.parse(binding.get("datetime").value),
+                            accuracy: Number(binding.get("accuracy").value),
+                            procedure: binding.get("procedure") ? 
+                                await this.findProcedure(binding.get("procedure").value as IriString) : undefined,
+                            deployment: binding.get("deployment") ? 
+                                await this.findDeployment(binding.get("deployment").value as IriString) : undefined,
+                        }
+                    }
+                }));
+            }).then(bindings => {
+                resolve(bindings.filter(pos => pos !== undefined));
+            }).catch(reject);
         });
-        return bindings.map((binding: Bindings) => {
-            const geoJSON = JSON.parse(binding.get("posGeoJSON").value);
-            if (geoJSON) {
-                const coordinates: Array<number> = geoJSON.coordinates;
-                return {
-                    latlng: coordinates.splice(0, 2),
-                    altitude: coordinates.length === 3 ? coordinates[2] : undefined,
-                    timestamp: Date.parse(binding.get("datetime").value),
-                    accuracy: Number(binding.get("accuracy").value),
-                    procedure: binding.get("procedureLabel") ? binding.get("procedureLabel").value : undefined
-                }
-            }
-        }).filter(pos => pos !== undefined);
     }
 
     /**
@@ -261,39 +347,46 @@ export class SolidController extends EventEmitter {
      * @param {number} [limit] Amount of velocities to fetch 
      * @returns {Promise<GeolocationPosition[]>} Promise of geolocation interface with speed
      */
-     async findAllVelocities(session: SolidSession, limit: number = 20): Promise<GeolocationPosition[]> {
-        const bindings = await this.driver.queryBindingsSolid(`
-            PREFIX ssn: <http://www.w3.org/ns/ssn/>
-            PREFIX sosa: <http://www.w3.org/ns/sosa/>
-            PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-            PREFIX qudt: <http://qudt.org/schema/qudt/>
-            PREFIX quantitykind: <http://qudt.org/vocab/quantitykind/>
+    findAllVelocities(session: SolidSession, limit: number = 20): Promise<GeolocationPosition[]> {
+        return new Promise((resolve, reject) => {
+            this.driver.queryBindingsSolid(`
+                PREFIX ssn: <http://www.w3.org/ns/ssn/>
+                PREFIX sosa: <http://www.w3.org/ns/sosa/>
+                PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+                PREFIX qudt: <http://qudt.org/schema/qudt/>
+                PREFIX quantitykind: <http://qudt.org/vocab/quantitykind/>
 
-            SELECT ?speed ?datetime ?procedureLabel {
-                ?profile a sosa:FeatureOfInterest ;
-                        ssn:hasProperty ?property .
-                ?observation sosa:hasResult ?result ;
-                            sosa:observedProperty ?property ;
-                            sosa:resultTime ?datetime .
-                OPTIONAL {
-                    ?observation sosa:usedProcedure ?procedure .
-                    ?procedure rdfs:label ?procedureLabel .
-                }
-                ?result a qudt:QuantityValue ;
-                        qudt:unit ?unit ;
-                        qudt:numericValue ?speed .
-                { ?unit qudt:hasQuantityKind quantitykind:Velocity }
-                UNION
-                { ?unit qudt:hasQuantityKind quantitykind:Speed }
-            } ORDER BY DESC(?datetime) LIMIT ${limit}
-        `, session, {
-            httpProxyHandler: new ProxyHandlerStatic("https://proxy.linkeddatafragments.org/"),
+                SELECT ?speed ?datetime ?procedure {
+                    ?profile a sosa:FeatureOfInterest ;
+                            ssn:hasProperty ?property .
+                    ?observation sosa:hasResult ?result ;
+                                sosa:observedProperty ?property ;
+                                sosa:resultTime ?datetime .
+                    OPTIONAL {
+                        ?observation sosa:usedProcedure ?procedure .
+                    }
+                    ?result a qudt:QuantityValue ;
+                            qudt:unit ?unit ;
+                            qudt:numericValue ?speed .
+                    { ?unit qudt:hasQuantityKind quantitykind:Velocity }
+                    UNION
+                    { ?unit qudt:hasQuantityKind quantitykind:Speed }
+                } ORDER BY DESC(?datetime) LIMIT ${limit}
+            `, session, {
+                httpProxyHandler: new ProxyHandlerStatic("https://proxy.linkeddatafragments.org/"),
+            }).then(bindings => {
+                return Promise.all(bindings.map(async (binding: Bindings) => ({
+                    speed: Number(binding.get("speed").value),
+                    timestamp: Date.parse(binding.get("datetime").value),
+                    procedure: binding.get("procedure") ? 
+                        await this.findProcedure(binding.get("procedure").value as IriString) : undefined,
+                    deployment: binding.get("deployment") ? 
+                        await this.findDeployment(binding.get("deployment").value as IriString) : undefined,
+                })));
+            }).then(bindings => {
+                resolve(bindings.filter(obj => obj !== undefined));
+            }).catch(reject);
         });
-        return bindings.map((binding: Bindings) => ({
-            speed: Number(binding.get("speed").value),
-            timestamp: Date.parse(binding.get("datetime").value),
-            procedure: binding.get("procedureLabel") ? binding.get("procedureLabel").value : undefined
-        })).filter(pos => pos !== undefined);
     }
 
     /**
@@ -303,37 +396,44 @@ export class SolidController extends EventEmitter {
      * @param {number} [limit] Amount of orientations to fetch 
      * @returns {Promise<GeolocationPosition[]>} Promise of geolocation interface with heading
      */
-     async findAllOrientations(session: SolidSession, limit: number = 20): Promise<GeolocationPosition[]> {
-        const bindings = await this.driver.queryBindingsSolid(`
-            PREFIX ssn: <http://www.w3.org/ns/ssn/>
-            PREFIX sosa: <http://www.w3.org/ns/sosa/>
-            PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-            PREFIX qudt: <http://qudt.org/schema/qudt/>
-            PREFIX quantitykind: <http://qudt.org/vocab/quantitykind/>
+    findAllOrientations(session: SolidSession, limit: number = 20): Promise<GeolocationPosition[]> {
+        return new Promise((resolve, reject) => {
+            this.driver.queryBindingsSolid(`
+                PREFIX ssn: <http://www.w3.org/ns/ssn/>
+                PREFIX sosa: <http://www.w3.org/ns/sosa/>
+                PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+                PREFIX qudt: <http://qudt.org/schema/qudt/>
+                PREFIX quantitykind: <http://qudt.org/vocab/quantitykind/>
 
-            SELECT ?heading ?datetime ?procedureLabel {
-                ?profile a sosa:FeatureOfInterest ;
-                        ssn:hasProperty ?property .
-                ?observation sosa:hasResult ?result ;
-                            sosa:observedProperty ?property ;
-                            sosa:resultTime ?datetime .
-                OPTIONAL {
-                    ?observation sosa:usedProcedure ?procedure .
-                    ?procedure rdfs:label ?procedureLabel .
-                }
-                ?result a qudt:QuantityValue ;
-                        qudt:unit ?unit ;
-                        qudt:numericValue ?heading .
-                ?unit qudt:hasQuantityKind quantitykind:Angle .
-            } ORDER BY DESC(?datetime) LIMIT ${limit}
-        `, session, {
-            httpProxyHandler: new ProxyHandlerStatic("https://proxy.linkeddatafragments.org/"),
+                SELECT ?heading ?datetime ?procedure {
+                    ?profile a sosa:FeatureOfInterest ;
+                            ssn:hasProperty ?property .
+                    ?observation sosa:hasResult ?result ;
+                                sosa:observedProperty ?property ;
+                                sosa:resultTime ?datetime .
+                    OPTIONAL {
+                        ?observation sosa:usedProcedure ?procedure .
+                    }
+                    ?result a qudt:QuantityValue ;
+                            qudt:unit ?unit ;
+                            qudt:numericValue ?heading .
+                    ?unit qudt:hasQuantityKind quantitykind:Angle .
+                } ORDER BY DESC(?datetime) LIMIT ${limit}
+            `, session, {
+                httpProxyHandler: new ProxyHandlerStatic("https://proxy.linkeddatafragments.org/"),
+            }).then(bindings => {
+                return Promise.all(bindings.map(async (binding: Bindings) => ({
+                    heading: Number(binding.get("heading").value),
+                    timestamp: Date.parse(binding.get("datetime").value),
+                    procedure: binding.get("procedure") ? 
+                        await this.findProcedure(binding.get("procedure").value as IriString) : undefined,
+                    deployment: binding.get("deployment") ? 
+                        await this.findDeployment(binding.get("deployment").value as IriString) : undefined,
+                })));
+            }).then(bindings => {
+                resolve(bindings.filter(obj => obj !== undefined));
+            }).catch(reject);
         });
-        return bindings.map((binding: Bindings) => ({
-            heading: Number(binding.get("heading").value),
-            timestamp: Date.parse(binding.get("datetime").value),
-            procedure: binding.get("procedureLabel") ? binding.get("procedureLabel").value : undefined
-        })).filter(pos => pos !== undefined);
     }
 
     async createPosition(session: SolidSession, data: GeolocationPosition) {
@@ -351,8 +451,10 @@ export class SolidController extends EventEmitter {
         position.altitude = data.altitude;
         position.spatialAccuracy = accuracy;
         observation.results.push(position);
-        if (data.procedure)
-            observation.usedProcedures.push(`${BASE_URI}${data.procedure}` as IriString);
+        if (data.procedure && data.procedure.uri)
+            observation.usedProcedures.push(data.procedure.uri);
+        if (data.deployment && data.deployment.uri)
+            observation.definedBy = data.deployment.uri;
         await this.service.setThing(session, RDFSerializer.serializeToSubjects(observation)[0]);
     }
     
@@ -366,8 +468,10 @@ export class SolidController extends EventEmitter {
         value.unit = AngleUnit.DEGREE;
         value.numericValue = data.heading;
         observation.results.push(value);
-        if (data.procedure)
-            observation.usedProcedures.push(`${BASE_URI}${data.procedure}` as IriString);
+        if (data.procedure && data.procedure.uri)
+            observation.usedProcedures.push(data.procedure.uri);
+        if (data.deployment && data.deployment.uri)
+            observation.definedBy = data.deployment.uri;
         await this.service.setThing(session, RDFSerializer.serializeToSubjects(observation)[0]);
     }
 
@@ -381,8 +485,10 @@ export class SolidController extends EventEmitter {
         value.unit = LinearVelocityUnit.METER_PER_SECOND;
         value.numericValue = data.speed;
         observation.results.push(value);
-        if (data.procedure)
-            observation.usedProcedures.push(`${BASE_URI}${data.procedure}` as IriString);
+        if (data.procedure && data.procedure.uri)
+            observation.usedProcedures.push(data.procedure.uri);
+        if (data.deployment && data.deployment.uri)
+            observation.definedBy = data.deployment.uri;
         await this.service.setThing(session, RDFSerializer.serializeToSubjects(observation)[0]);
     }
 }

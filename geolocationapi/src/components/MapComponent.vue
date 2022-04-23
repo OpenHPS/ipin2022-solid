@@ -46,9 +46,9 @@
 <script>
 import { FullScreen } from 'ol/control';
 import { LoginModal, MenuComponent } from 'ipin2022-components';
-import { SolidController } from 'ipin2022-common';
+import { BASE_URI, SolidController } from 'ipin2022-common';
 
-const PROCEDURE = "geolocationapi";
+const PROCEDURE = BASE_URI + "geolocationapi";
 
 export default {
   name: 'MapComponent',
@@ -66,6 +66,7 @@ export default {
         lnglat: [],
         altitude: null,
         heading: null,
+        speed: null,
         accuracy: null,
         altitudeAccuracy: null
       },
@@ -74,6 +75,19 @@ export default {
   },
   beforeMount() {
     this.controller = new SolidController(this.title);
+    this.controller.once('ready', () => {
+      this.controller.updatePosition({
+        lnglat: this.position.lnglat,
+        altitude: this.position.altitude,
+        accuracy: this.position.accuracy,
+        altitudeAccuracy: this.position.altitudeAccuracy,
+        heading: this.position.heading,
+        speed: this.position.speed,
+        procedure: {
+          uri: PROCEDURE
+        }
+      });
+    });
   },
   methods: {
     onMapCreated(vm) {
@@ -87,30 +101,40 @@ export default {
       this.position.lnglat = position;
       this.center = position;
       this.zoom = 16;
-      this.controller.updatePosition({
-        lnglat: this.position.lnglat,
-        altitude: this.position.altitude,
-        accuracy: this.position.accuracy,
-        altitudeAccuracy: this.position.altitudeAccuracy,
-        procedure: PROCEDURE
-      });
+      if (this.controller.isLoggedIn) {
+        this.controller.updatePosition({
+          lnglat: this.position.lnglat,
+          altitude: this.position.altitude,
+          accuracy: this.position.accuracy,
+          altitudeAccuracy: this.position.altitudeAccuracy,
+          procedure: {
+            uri: PROCEDURE
+          }
+        });
+      }
     },
     onUpdateAltitude(altitude) {
       this.position.altitude = altitude;
     },
     onUpdateHeading(heading) {
       this.position.heading = heading;
-      this.controller.updatePosition({
-        heading,
-        procedure: PROCEDURE
-      });
+      if (this.controller.isLoggedIn) {
+        this.controller.updatePosition({
+          heading,
+          procedure: PROCEDURE
+        });
+      }
     },
     onUpdateSpeed(speed) {
       this.position.speed = speed;
-      this.controller.updatePosition({
-        speed,
-        procedure: PROCEDURE
-      });
+      if (this.controller.isLoggedIn) {
+        this.controller.updatePosition({
+          speed,
+          procedure: {
+            uri: PROCEDURE
+          }
+        });
+      }
     },
   },
 }

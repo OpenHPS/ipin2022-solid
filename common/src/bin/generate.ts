@@ -2,12 +2,20 @@ import { SymbolicSpace } from '@openhps/geospatial';
 import * as path from 'path';
 import * as fs from 'fs';
 import { AbsolutePosition } from '@openhps/core';
-import { RDFSerializer, Store } from '@openhps/rdf';
-import { BASE_URI, Spaces, Deployment, PolygonGeometry, System, Procedure } from '..';
+import { IriString, RDFSerializer, Store, ssn, ogc } from '@openhps/rdf';
+import { BASE_URI, Spaces, Deployment, PolygonGeometry, System, Procedure, ObjectProperty } from '..';
 import { building } from '../models/Spaces';
 
 // Quad store
 const store = new Store();
+
+// Object property
+const inDeployment = new ObjectProperty(BASE_URI + "inDeployment" as IriString);
+inDeployment.domain = ogc.Geometry;
+inDeployment.range = ssn.Deployment;
+inDeployment.label = "in deployment";
+inDeployment.comment = "Identifies that a position is within a deployment";
+store.addQuads(RDFSerializer.serializeToQuads(inDeployment));
 
 // Geolocation API
 const system1 = new System(`${BASE_URI}system_outdoor`);

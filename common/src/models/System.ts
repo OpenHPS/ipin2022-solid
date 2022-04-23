@@ -41,7 +41,7 @@ export class System extends SerializableNamedNode {
     })
     subSystems?: System[] = [];
 
-    @SerializableArrayMember(System, {
+    @SerializableArrayMember(Procedure, {
         rdf: {
             predicate: ssn._implements
         }

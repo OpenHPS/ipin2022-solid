@@ -1,5 +1,9 @@
 <template>
-  <b-navbar :fixed-top="true" type="is-primary">
+  <b-navbar 
+    :fixed-top="true" 
+    type="is-primary"
+    :shadow="true"
+  >
     <template #brand>
       <b-navbar-item>
         <h1>{{ title }}</h1>
@@ -7,13 +11,13 @@
     </template>
     <template #start>
       <b-navbar-dropdown label="Applications">
-        <b-navbar-item href="../consumer">
+        <b-navbar-item href="../consumer/">
           Consumer application
         </b-navbar-item>
-        <b-navbar-item href="../geolocationapi">
+        <b-navbar-item href="../geolocationapi/">
           Geolocation API
         </b-navbar-item>
-        <b-navbar-item href="../qrscanner">
+        <b-navbar-item href="../qrscanner/">
           QR-scanner
         </b-navbar-item>
       </b-navbar-dropdown>
@@ -52,7 +56,3 @@ export default {
   }
 }
 </script>
-
-<style lang="scss" scoped>
-
-</style>
