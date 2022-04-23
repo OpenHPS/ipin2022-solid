@@ -1,13 +1,18 @@
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>.
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#>.
 @prefix ssn: <http://www.w3.org/ns/ssn/>.
 @prefix ogc: <http://www.opengis.net/ont/geosparql#>.
-@prefix xsd: <http://www.w3.org/2001/XMLSchema#>.
 
+<http://openhps.github.io/ipin2022-solid/tracking.ttl#inDeployment> a <http://www.w3.org/2002/07/owl#ObjectProperty>;
+    rdfs:label "in deployment"@en;
+    rdfs:comment "Identifies that a position is within a deployment"@en;
+    rdfs:domain "http://www.opengis.net/ont/geosparql#Geometry";
+    rdfs:range "http://www.w3.org/ns/ssn/Deployment".
 <http://openhps.github.io/ipin2022-solid/tracking.ttl#system_outdoor> a ssn:System;
     rdfs:label "Outdoor positioning system"@en;
     ssn:implements <http://openhps.github.io/ipin2022-solid/tracking.ttl#geolocationapi>.
-<http://openhps.github.io/ipin2022-solid/tracking.ttl#geolocationapi> a ssn:System;
+<http://openhps.github.io/ipin2022-solid/tracking.ttl#geolocationapi> a <http://www.w3.org/ns/sosa/Procedure>;
     rdfs:label "Geolocation API"@en.
 <http://openhps.github.io/ipin2022-solid/tracking.ttl#deployment_pl9_3_lobby_1> a ssn:Deployment, ogc:SpatialObject;
     rdfs:label "Lobby #1"@en;
@@ -168,9 +173,9 @@
     rdfs:label "Outdoor positioning system"@en;
     ssn:implements <http://openhps.github.io/ipin2022-solid/tracking.ttl#qrscanner_checkin>, <http://openhps.github.io/ipin2022-solid/tracking.ttl#qrscanner_checkout>;
     ssn:hasDeployment <http://openhps.github.io/ipin2022-solid/tracking.ttl#deployment_pl9>.
-<http://openhps.github.io/ipin2022-solid/tracking.ttl#qrscanner_checkin> a ssn:System;
+<http://openhps.github.io/ipin2022-solid/tracking.ttl#qrscanner_checkin> a <http://www.w3.org/ns/sosa/Procedure>;
     rdfs:label "QR-scanner Check-in"@en;
     rdfs:comment "The act of scanning a QR-code to check-in to a room or space."@en.
-<http://openhps.github.io/ipin2022-solid/tracking.ttl#qrscanner_checkout> a ssn:System;
+<http://openhps.github.io/ipin2022-solid/tracking.ttl#qrscanner_checkout> a <http://www.w3.org/ns/sosa/Procedure>;
     rdfs:label "QR-scanner Check-out"@en;
     rdfs:comment "The act of scanning a QR-code to check-out from a room or space."@en.
