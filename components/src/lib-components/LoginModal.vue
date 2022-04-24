@@ -7,18 +7,21 @@
         aria-label="Solid Login"
         aria-modal>
         <form action="" @submit="(e) => { e.preventDefault(); login(); }">
-            <div class="modal-card" style="width: 100%">
+            <div class="modal-card" style="width: 100%; min-width: 300px;">
                 <header class="modal-card-head">
                     <p class="modal-card-title">Login to Solid Provider</p>
                 </header>
                 <section class="modal-card-body">
                     <b-field label="Solid Issuer">
-                        <b-input
+                        <b-autocomplete
                             type="url"
                             v-model="issuer"
+                            :data="knownIssuers"
                             placeholder="Your Solid Issuer"
-                            required>
-                        </b-input>
+                            clearable
+                            required
+                            @select="option => selected = option">
+                        </b-autocomplete>
                     </b-field>
                 </section>
                 <footer class="modal-card-foot">
@@ -39,7 +42,12 @@ export default {
     data () {
         return {
             issuer: null,
-            active: true
+            active: true,
+            knownIssuers: [
+                "https://solidweb.org/",
+                "https://broker.pod.inrupt.com/",
+                "https://solidcommunity.net/"
+            ]
         }
     },
     methods: {
@@ -54,3 +62,13 @@ export default {
     }
 };
 </script>
+
+<style scoped>
+.modal .animation-content .modal-card {
+  overflow: visible !important;
+}
+
+.modal-card-body {
+  overflow: visible !important;
+}
+</style>

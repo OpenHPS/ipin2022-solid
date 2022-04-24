@@ -1,22 +1,37 @@
 <template>
   <div class="app">
     <MenuComponent :controller="controller" :title="title" />
+
+    <b-message 
+        id="latest-info"
+        v-if="observations.positions[0]"
+        style="margin: 10px;"
+        type="is-info" 
+        aria-close-label="Close message">
+        <span v-if="observations.positions[0]" id="latest-position">{{ observations.positions[0].latitude }}, {{ observations.positions[0].longitude }} {{ observations.positions[0].altitude ? `, ${observations.positions[0].altitude}` : ""}}</span>
+        <span v-if="observations.orientations[0]" id="latest-orientation"><i class="fa fa-compass"></i> {{ observations.orientations[0].heading }}</span>
+        <span v-if="observations.velocities[0]" id="latest-speed"><i class="fa fa-tachometer"></i> {{ observations.velocities[0].speed }}</span>
+    </b-message>
+
     <b-tabs
+        style="margin-top: 5px"
         expanded
     >
-        <b-tab-item icon="fas fa-map-marker" label="Position">
+        <b-tab-item label="Position">
             <b-table 
                 :striped="true" 
                 :narrowed="true"
                 :loading="loading.positions"
-                :data="observations.positions">
+                :data="observations.positions"
+                detailed>
+                <template #detail="props">
+                    <MapComponent :position="props.row._raw" />
+                </template>
                 <b-table-column field="datetime" width="180" label="Date" v-slot="props">
                     {{ props.row.datetime }}
                 </b-table-column>
-                <b-table-column width="200" field="position" label="Coordinates" v-slot="props">
-                    <b-button style="width: 100%" size="is-small" @click="openMap(props.row._raw)">
-                        {{ props.row.latitude }}, {{ props.row.longitude }}
-                    </b-button>
+                <b-table-column width="250" field="position" label="Coordinates" v-slot="props">
+                    {{ props.row.latitude }}, {{ props.row.longitude }}
                 </b-table-column>
                 <b-table-column field="altitude" label="Altitude" v-slot="props">
                     {{ props.row.altitude }}
@@ -34,7 +49,7 @@
             </b-table>
         </b-tab-item>
 
-        <b-tab-item icon="fas fa-compass" label="Orientation">
+        <b-tab-item label="Orientation">
             <b-table 
                 :striped="true"
                 :narrowed="true"
@@ -56,7 +71,7 @@
             </b-table>
         </b-tab-item>
 
-        <b-tab-item icon="fas fa-tachometer" label="Velocity">
+        <b-tab-item label="Velocity">
             <b-table 
                 :striped="true" 
                 :narrowed="true"
@@ -85,12 +100,13 @@
 <script>
 import { LoginModal, MenuComponent } from 'ipin2022-components';
 import { SolidController } from 'ipin2022-common';
-import MapModalComponent from './MapModalComponent.vue';
+import MapComponent from './MapComponent.vue';
 
 export default {
   name: 'MainPage',
   components: { 
     LoginModal,
+    MapComponent,
     MenuComponent
   },
   data () {
@@ -133,14 +149,6 @@ export default {
     });
   },
   methods: {
-    openMap(position) {
-        this.$buefy.modal.open({
-            parent: this,
-            component: MapModalComponent,
-            hasModalCard: true,
-            props: { position }
-        });
-    },
     loadPositions(append = false) {
         this.loading.positions = !append && true;
         this.controller.findAllPositions(this.controller.getSession(), undefined, append ? 1 : 50).then(positions => {
@@ -231,5 +239,16 @@ export default {
 }
 .loading-overlay.is-active {
     min-height: 200px;
+}
+
+#latest-info span {
+    display: block;
+    font-size: 120%;
+}
+
+.detail-container {
+    margin: 0;
+    padding: 0 !important;
+    height: 250px;
 }
 </style>

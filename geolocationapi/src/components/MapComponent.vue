@@ -2,7 +2,6 @@
   <div class="map">
     <MenuComponent :controller="controller" :title="title" />
     <VlMap
-      v-if="controller && controller.isLoggedIn"
       ref="map"
       data-projection="EPSG:4326"
       @created="onMapCreated"
@@ -80,12 +79,14 @@ export default {
     });
   },
   mounted() {
-    navigator.geolocation.watchPosition(this.onUpdatePosition.bind(this), 
-      console.error, 
-      {
-        enableHighAccuracy: true,
-        maximumAge: 5000
-      });
+    this.controller.once('ready', () => {
+      navigator.geolocation.watchPosition(this.onUpdatePosition.bind(this), 
+        console.error, 
+        {
+          enableHighAccuracy: true,
+          maximumAge: 5000
+        });
+    });
   },
   methods: {
     onMapCreated(vm) {
