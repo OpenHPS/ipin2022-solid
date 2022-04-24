@@ -4,18 +4,18 @@
 @prefix ssn: <http://www.w3.org/ns/ssn/>.
 @prefix ogc: <http://www.opengis.net/ont/geosparql#>.
 
-<http://openhps.github.io/ipin2022-solid/tracking.ttl#inDeployment> a <http://www.w3.org/2002/07/owl#ObjectProperty>;
+<http://purl.org/ipin2022-solid#inDeployment> a <http://www.w3.org/2002/07/owl#ObjectProperty>;
     rdfs:label "in deployment"@en;
     rdfs:comment "Identifies that a position is within a deployment"@en;
     rdfs:domain "http://www.opengis.net/ont/geosparql#Geometry";
     rdfs:range "http://www.w3.org/ns/ssn/Deployment".
-<http://openhps.github.io/ipin2022-solid/tracking.ttl#system_outdoor> a ssn:System;
+<http://purl.org/ipin2022-solid#system_outdoor> a ssn:System;
     rdfs:label "Outdoor positioning system"@en;
-    ssn:implements <http://openhps.github.io/ipin2022-solid/tracking.ttl#geolocationapi>.
-<http://openhps.github.io/ipin2022-solid/tracking.ttl#geolocationapi> a <http://www.w3.org/ns/sosa/Procedure>;
+    ssn:implements <http://purl.org/ipin2022-solid#geolocationapi>.
+<http://purl.org/ipin2022-solid#geolocationapi> a <http://www.w3.org/ns/sosa/Procedure>;
     rdfs:label "Geolocation API"@en;
     rdfs:comment "Browser Geolocation API"@en.
-<http://openhps.github.io/ipin2022-solid/tracking.ttl#deployment_pl9_3_lobby_1> a ssn:Deployment, ogc:SpatialObject;
+<http://purl.org/ipin2022-solid#deployment_pl9_3_lobby_1> a ssn:Deployment, ogc:SpatialObject;
     rdfs:label "Lobby #1"@en;
     ogc:hasGeometry [
   a ogc:Geometry;
@@ -24,8 +24,8 @@
   ogc:spatialDimension 3;
   ogc:dimension 3
 ];
-    ogc:sfWithin <http://openhps.github.io/ipin2022-solid/tracking.ttl#deployment_pl9_3>.
-<http://openhps.github.io/ipin2022-solid/tracking.ttl#deployment_pl9_3> a ssn:Deployment, ogc:SpatialObject;
+    ogc:sfWithin <http://purl.org/ipin2022-solid#deployment_pl9_3>.
+<http://purl.org/ipin2022-solid#deployment_pl9_3> a ssn:Deployment, ogc:SpatialObject;
     rdfs:label "PL9.3"@en;
     ogc:hasGeometry [
   a ogc:Geometry;
@@ -34,8 +34,8 @@
   ogc:spatialDimension 3;
   ogc:dimension 3
 ];
-    ogc:sfWithin <http://openhps.github.io/ipin2022-solid/tracking.ttl#deployment_pl9>.
-<http://openhps.github.io/ipin2022-solid/tracking.ttl#deployment_pl9_3_lobby_2> a ssn:Deployment, ogc:SpatialObject;
+    ogc:sfWithin <http://purl.org/ipin2022-solid#deployment_pl9>.
+<http://purl.org/ipin2022-solid#deployment_pl9_3_lobby_2> a ssn:Deployment, ogc:SpatialObject;
     rdfs:label "Lobby #2"@en;
     ogc:hasGeometry [
   a ogc:Geometry;
@@ -44,8 +44,8 @@
   ogc:spatialDimension 3;
   ogc:dimension 3
 ];
-    ogc:sfWithin <http://openhps.github.io/ipin2022-solid/tracking.ttl#deployment_pl9_3>.
-<http://openhps.github.io/ipin2022-solid/tracking.ttl#deployment_pl9_3_corridor> a ssn:Deployment, ogc:SpatialObject;
+    ogc:sfWithin <http://purl.org/ipin2022-solid#deployment_pl9_3>.
+<http://purl.org/ipin2022-solid#deployment_pl9_3_corridor> a ssn:Deployment, ogc:SpatialObject;
     rdfs:label "Corridor"@en;
     ogc:hasGeometry [
   a ogc:Geometry;
@@ -54,8 +54,8 @@
   ogc:spatialDimension 3;
   ogc:dimension 3
 ];
-    ogc:sfWithin <http://openhps.github.io/ipin2022-solid/tracking.ttl#deployment_pl9_3>.
-<http://openhps.github.io/ipin2022-solid/tracking.ttl#deployment_pl9_3_62> a ssn:Deployment, ogc:SpatialObject;
+    ogc:sfWithin <http://purl.org/ipin2022-solid#deployment_pl9_3>.
+<http://purl.org/ipin2022-solid#deployment_pl9_3_62> a ssn:Deployment, ogc:SpatialObject;
     rdfs:label "PL9.3.62"@en;
     ogc:hasGeometry [
   a ogc:Geometry;
@@ -64,8 +64,8 @@
   ogc:spatialDimension 3;
   ogc:dimension 3
 ];
-    ogc:sfWithin <http://openhps.github.io/ipin2022-solid/tracking.ttl#deployment_pl9_3>.
-<http://openhps.github.io/ipin2022-solid/tracking.ttl#deployment_pl9_3_60> a ssn:Deployment, ogc:SpatialObject;
+    ogc:sfWithin <http://purl.org/ipin2022-solid#deployment_pl9_3>.
+<http://purl.org/ipin2022-solid#deployment_pl9_3_60> a ssn:Deployment, ogc:SpatialObject;
     rdfs:label "PL9.3.60"@en;
     ogc:hasGeometry [
   a ogc:Geometry;
@@ -74,8 +74,8 @@
   ogc:spatialDimension 3;
   ogc:dimension 3
 ];
-    ogc:sfWithin <http://openhps.github.io/ipin2022-solid/tracking.ttl#deployment_pl9_3>.
-<http://openhps.github.io/ipin2022-solid/tracking.ttl#deployment_pl9_3_58> a ssn:Deployment, ogc:SpatialObject;
+    ogc:sfWithin <http://purl.org/ipin2022-solid#deployment_pl9_3>.
+<http://purl.org/ipin2022-solid#deployment_pl9_3_58> a ssn:Deployment, ogc:SpatialObject;
     rdfs:label "PL9.3.58"@en;
     ogc:hasGeometry [
   a ogc:Geometry;
@@ -84,8 +84,8 @@
   ogc:spatialDimension 3;
   ogc:dimension 3
 ];
-    ogc:sfWithin <http://openhps.github.io/ipin2022-solid/tracking.ttl#deployment_pl9_3>.
-<http://openhps.github.io/ipin2022-solid/tracking.ttl#deployment_pl9_3_56> a ssn:Deployment, ogc:SpatialObject;
+    ogc:sfWithin <http://purl.org/ipin2022-solid#deployment_pl9_3>.
+<http://purl.org/ipin2022-solid#deployment_pl9_3_56> a ssn:Deployment, ogc:SpatialObject;
     rdfs:label "PL9.3.56"@en;
     ogc:hasGeometry [
   a ogc:Geometry;
@@ -94,8 +94,8 @@
   ogc:spatialDimension 3;
   ogc:dimension 3
 ];
-    ogc:sfWithin <http://openhps.github.io/ipin2022-solid/tracking.ttl#deployment_pl9_3>.
-<http://openhps.github.io/ipin2022-solid/tracking.ttl#deployment_pl9_3_32> a ssn:Deployment, ogc:SpatialObject;
+    ogc:sfWithin <http://purl.org/ipin2022-solid#deployment_pl9_3>.
+<http://purl.org/ipin2022-solid#deployment_pl9_3_32> a ssn:Deployment, ogc:SpatialObject;
     rdfs:label "PL9.3.32"@en;
     ogc:hasGeometry [
   a ogc:Geometry;
@@ -104,8 +104,8 @@
   ogc:spatialDimension 3;
   ogc:dimension 3
 ];
-    ogc:sfWithin <http://openhps.github.io/ipin2022-solid/tracking.ttl#deployment_pl9_3>.
-<http://openhps.github.io/ipin2022-solid/tracking.ttl#deployment_pl9_3_54> a ssn:Deployment, ogc:SpatialObject;
+    ogc:sfWithin <http://purl.org/ipin2022-solid#deployment_pl9_3>.
+<http://purl.org/ipin2022-solid#deployment_pl9_3_54> a ssn:Deployment, ogc:SpatialObject;
     rdfs:label "PL9.3.54"@en;
     ogc:hasGeometry [
   a ogc:Geometry;
@@ -114,8 +114,8 @@
   ogc:spatialDimension 3;
   ogc:dimension 3
 ];
-    ogc:sfWithin <http://openhps.github.io/ipin2022-solid/tracking.ttl#deployment_pl9_3>.
-<http://openhps.github.io/ipin2022-solid/tracking.ttl#deployment_pl9> a ssn:Deployment, ogc:SpatialObject;
+    ogc:sfWithin <http://purl.org/ipin2022-solid#deployment_pl9_3>.
+<http://purl.org/ipin2022-solid#deployment_pl9> a ssn:Deployment, ogc:SpatialObject;
     rdfs:label "PL9"@en;
     ogc:hasGeometry [
   a ogc:Geometry;
@@ -130,7 +130,7 @@
   ogc:spatialDimension 3;
   ogc:dimension 3
 ].
-<http://openhps.github.io/ipin2022-solid/tracking.ttl#deployment_pl9_3_elevators> a ssn:Deployment, ogc:SpatialObject;
+<http://purl.org/ipin2022-solid#deployment_pl9_3_elevators> a ssn:Deployment, ogc:SpatialObject;
     rdfs:label "Elevators"@en;
     ogc:hasGeometry [
   a ogc:Geometry;
@@ -139,8 +139,8 @@
   ogc:spatialDimension 3;
   ogc:dimension 3
 ];
-    ogc:sfWithin <http://openhps.github.io/ipin2022-solid/tracking.ttl#deployment_pl9_3>.
-<http://openhps.github.io/ipin2022-solid/tracking.ttl#deployment_pl9_3_staircase> a ssn:Deployment, ogc:SpatialObject;
+    ogc:sfWithin <http://purl.org/ipin2022-solid#deployment_pl9_3>.
+<http://purl.org/ipin2022-solid#deployment_pl9_3_staircase> a ssn:Deployment, ogc:SpatialObject;
     rdfs:label "Staircase"@en;
     ogc:hasGeometry [
   a ogc:Geometry;
@@ -149,8 +149,8 @@
   ogc:spatialDimension 3;
   ogc:dimension 3
 ];
-    ogc:sfWithin <http://openhps.github.io/ipin2022-solid/tracking.ttl#deployment_pl9_3>.
-<http://openhps.github.io/ipin2022-solid/tracking.ttl#deployment_pl9_3_toilets_1> a ssn:Deployment, ogc:SpatialObject;
+    ogc:sfWithin <http://purl.org/ipin2022-solid#deployment_pl9_3>.
+<http://purl.org/ipin2022-solid#deployment_pl9_3_toilets_1> a ssn:Deployment, ogc:SpatialObject;
     rdfs:label "Toilets #1"@en;
     ogc:hasGeometry [
   a ogc:Geometry;
@@ -159,8 +159,8 @@
   ogc:spatialDimension 3;
   ogc:dimension 3
 ];
-    ogc:sfWithin <http://openhps.github.io/ipin2022-solid/tracking.ttl#deployment_pl9_3>.
-<http://openhps.github.io/ipin2022-solid/tracking.ttl#deployment_pl9_3_toilets_2> a ssn:Deployment, ogc:SpatialObject;
+    ogc:sfWithin <http://purl.org/ipin2022-solid#deployment_pl9_3>.
+<http://purl.org/ipin2022-solid#deployment_pl9_3_toilets_2> a ssn:Deployment, ogc:SpatialObject;
     rdfs:label "Toilets #2"@en;
     ogc:hasGeometry [
   a ogc:Geometry;
@@ -169,14 +169,14 @@
   ogc:spatialDimension 3;
   ogc:dimension 3
 ];
-    ogc:sfWithin <http://openhps.github.io/ipin2022-solid/tracking.ttl#deployment_pl9_3>.
-<http://openhps.github.io/ipin2022-solid/tracking.ttl#system_indoor> a ssn:System;
+    ogc:sfWithin <http://purl.org/ipin2022-solid#deployment_pl9_3>.
+<http://purl.org/ipin2022-solid#system_indoor> a ssn:System;
     rdfs:label "Outdoor positioning system"@en;
-    ssn:implements <http://openhps.github.io/ipin2022-solid/tracking.ttl#qrscanner_checkin>, <http://openhps.github.io/ipin2022-solid/tracking.ttl#qrscanner_checkout>;
-    ssn:hasDeployment <http://openhps.github.io/ipin2022-solid/tracking.ttl#deployment_pl9>.
-<http://openhps.github.io/ipin2022-solid/tracking.ttl#qrscanner_checkin> a <http://www.w3.org/ns/sosa/Procedure>;
+    ssn:implements <http://purl.org/ipin2022-solid#qrscanner_checkin>, <http://purl.org/ipin2022-solid#qrscanner_checkout>;
+    ssn:hasDeployment <http://purl.org/ipin2022-solid#deployment_pl9>.
+<http://purl.org/ipin2022-solid#qrscanner_checkin> a <http://www.w3.org/ns/sosa/Procedure>;
     rdfs:label "QR-scanner Check-in"@en;
     rdfs:comment "The act of scanning a QR-code to check-in to a room or space."@en.
-<http://openhps.github.io/ipin2022-solid/tracking.ttl#qrscanner_checkout> a <http://www.w3.org/ns/sosa/Procedure>;
+<http://purl.org/ipin2022-solid#qrscanner_checkout> a <http://www.w3.org/ns/sosa/Procedure>;
     rdfs:label "QR-scanner Check-out"@en;
     rdfs:comment "The act of scanning a QR-code to check-out from a room or space."@en.
