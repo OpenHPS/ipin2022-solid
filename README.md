@@ -14,5 +14,9 @@ together with images and video material. The reason for this is to ensure the an
 ## Consumer application
 [https://openhps.github.io/ipin2022-solid/consumer/](https://openhps.github.io/ipin2022-solid/consumer/)
 
+Example 1          |  Example 2
+:-------------------------:|:-------------------------:
+![](./docs/images/consumer_app.png)  |  ![](./docs/images/consumer_app_notification.png)
+
 ## Screenshots and Video
 This section

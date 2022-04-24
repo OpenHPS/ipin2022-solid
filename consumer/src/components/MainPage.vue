@@ -139,7 +139,7 @@ export default {
         this.loadVelocities();
     });
     this.controller.on('newPosition', () => {
-        this.$buefy.toast.open(`New position available! Updating ...)!`);
+        this.$buefy.toast.open(`New position available! Updating ...!`);
         this.loadPositions(true);
     });
     this.controller.on('newOrientation', () => {
