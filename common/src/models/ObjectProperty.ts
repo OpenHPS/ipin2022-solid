@@ -1,17 +1,17 @@
-import { SerializableMember, SerializableObject } from "@openhps/core";
-import { IriString } from "@openhps/rdf/serialization";
-import { owl, rdfs } from "@openhps/rdf/vocab";
+import { SerializableMember, SerializableObject } from '@openhps/core';
+import { IriString } from '@openhps/rdf/serialization';
+import { owl, rdfs } from '@openhps/rdf/vocab';
 
 @SerializableObject({
     rdf: {
-        type: owl.ObjectProperty
-    }
+        type: owl.ObjectProperty,
+    },
 })
 export class ObjectProperty {
     @SerializableMember({
         rdf: {
-            identifier: true
-        }
+            identifier: true,
+        },
     })
     uri: IriString;
 
@@ -22,30 +22,30 @@ export class ObjectProperty {
     @SerializableMember({
         rdf: {
             predicate: rdfs.label,
-            language: "en"
-        }
+            language: 'en',
+        },
     })
     label?: string;
 
     @SerializableMember({
         rdf: {
             predicate: rdfs.comment,
-            language: "en"
-        }
+            language: 'en',
+        },
     })
     comment?: string;
 
     @SerializableMember({
         rdf: {
             predicate: rdfs.domain,
-        }
+        },
     })
     domain?: IriString;
 
     @SerializableMember({
         rdf: {
             predicate: rdfs.range,
-        }
+        },
     })
     range?: IriString;
 }

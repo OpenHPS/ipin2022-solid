@@ -1,23 +1,23 @@
-import { SerializableMember, SerializableObject, Unit } from "@openhps/core";
-import { qudt } from "@openhps/rdf/vocab";
+import { SerializableMember, SerializableObject, Unit } from '@openhps/core';
+import { qudt } from '@openhps/rdf/vocab';
 
 @SerializableObject({
     rdf: {
-        type: qudt.QuantityValue
-    }
+        type: qudt.QuantityValue,
+    },
 })
 export class QuantityValue {
     @SerializableMember({
         rdf: {
-            predicate: qudt.unit
-        }
+            predicate: qudt.unit,
+        },
     })
     unit: Unit;
 
     @SerializableMember({
         rdf: {
-            predicate: qudt.numericValue
-        }
+            predicate: qudt.numericValue,
+        },
     })
     numericValue: number;
 }

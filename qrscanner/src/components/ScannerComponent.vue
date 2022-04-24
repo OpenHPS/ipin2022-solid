@@ -68,9 +68,13 @@ export default {
         // Check if check in or check out
         return Promise.all([space, this.controller.findAllPositions(
           this.controller.getSession(),
-          undefined,
-          1,
-          [PROCEDURE_CHECK_IN, PROCEDURE_CHECK_OUT]
+          {
+            procedure: [PROCEDURE_CHECK_IN, PROCEDURE_CHECK_OUT],
+            limit: 1,
+            fetchAccuracy: false,
+            fetchProcedure: false,
+            fetchDeployment: false
+          }
         )]);
       }).then(([space, positions]) => {
         let procedure = PROCEDURE_CHECK_IN;

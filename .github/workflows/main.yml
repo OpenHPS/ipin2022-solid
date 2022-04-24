@@ -24,6 +24,7 @@ jobs:
         working-directory: ./common
         run: |
           npm run test
+          npm run lint
       - name: Build 'components'
         working-directory: ./components
         run: |
@@ -34,17 +35,20 @@ jobs:
         run: |
           npm install
           npm run build
+          npm run lint
       - name: Build 'qrscanner'
         working-directory: ./qrscanner
         run: |
           npm install
           npm run build
           npm run generate
+          npm run lint
       - name: Build 'consumer'
         working-directory: ./consumer
         run: |
           npm install
           npm run build
+          npm run lint
       - name: Prepare deployment
         run: |
           mkdir ./_site
@@ -59,6 +63,8 @@ jobs:
           cp -r ./consumer/dist/. ./_site/consumer/
           cp ./common/dist/tracking.ttl ./_site/tracking.ttl
           touch ./_site/index.html
+
+          cp README.md ./_site/README.md
       - name: Deploy site to GitHub
         uses: peaceiris/actions-gh-pages@v3
         with:

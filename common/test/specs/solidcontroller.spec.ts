@@ -25,31 +25,55 @@ describe('SolidController', () => {
     });
 
     it('should get all positions', (done) => {
-        controller.findAllPositions(session, 1000, 20).then(positions => {
+        controller.findAllPositions(session, {
+            limit: 20
+        }).then(positions => {
             expect(positions.length).to.be.greaterThanOrEqual(2);
             done();
         }).catch(done);
     });
     
     it('should get all positions of qrscanner', (done) => {
-        controller.findAllPositions(session, 1000, 20, BASE_URI + "qrscanner_checkin" as IriString).then(positions => {
+        controller.findAllPositions(session, {
+            procedure: [
+                BASE_URI + "qrscanner_checkin" as IriString
+            ],
+            limit: 20,
+            fetchAccuracy: true,
+            fetchDeployment: true,
+            fetchProcedure: false
+        }).then(positions => {
             expect(positions.length).to.be.greaterThanOrEqual(1);;
             done();
         }).catch(done);
     });
 
     it('should get all positions of geolocationapi', (done) => {
-        controller.findAllPositions(session, 1000, 20, BASE_URI + "geolocationapi" as IriString).then(positions => {
+        controller.findAllPositions(session, {
+            procedure: [
+                BASE_URI + "geolocationapi" as IriString
+            ],
+            limit: 20,
+            fetchAccuracy: true,
+            fetchDeployment: false,
+            fetchProcedure: false
+        }).then(positions => {
             expect(positions.length).to.be.greaterThanOrEqual(1);
             done();
         }).catch(done);
     });
 
     it('should get all positions of a specific array of procedures', (done) => {
-        controller.findAllPositions(session, 1000, 20, [
-            BASE_URI + "qrscanner_checkin" as IriString,
-            BASE_URI + "geolocationapi" as IriString
-        ]).then(positions => {
+        controller.findAllPositions(session, {
+            procedure: [
+                BASE_URI + "qrscanner_checkin" as IriString,
+                BASE_URI + "geolocationapi" as IriString
+            ],
+            limit: 20,
+            fetchAccuracy: true,
+            fetchDeployment: true,
+            fetchProcedure: true
+        }).then(positions => {
             expect(positions.length).to.be.greaterThanOrEqual(3);
             done();
         }).catch(done);
@@ -58,24 +82,32 @@ describe('SolidController', () => {
     it('shoud get 1 position fast', (done) => {
         const PROCEDURE_CHECK_IN = BASE_URI + "qrscanner_checkin" as IriString;
         const PROCEDURE_CHECK_OUT = BASE_URI + "qrscanner_checkout" as IriString;
-        controller.findAllPositions(session, undefined, 1, [
-            PROCEDURE_CHECK_IN,
-            PROCEDURE_CHECK_OUT
-        ]).then(positions => {
+        controller.findAllPositions(session, {
+            procedure: [
+                PROCEDURE_CHECK_IN,
+                PROCEDURE_CHECK_OUT 
+            ],
+            limit: 1,
+            fetchAccuracy: false,
+            fetchDeployment: false,
+            fetchProcedure: false
+        }).then(positions => {
             expect(positions.length).to.be.greaterThanOrEqual(1);
             done();
         }).catch(done);
     });
 
     it('shoud get the latest position', (done) => {
-        controller.findAllPositions(session, undefined, 1).then(positions => {
+        controller.findAllPositions(session, {
+            limit: 1,
+        }).then(positions => {
             expect(positions.length).to.equal(1);
             done();
         }).catch(done);     
     });
     
     it('should get all velocities', (done) => {
-        controller.findAllVelocities(session, 20).then(velocities => {
+        controller.findAllVelocities(session).then(velocities => {
             expect(velocities.length).to.be.greaterThanOrEqual(2);
             velocities.forEach(velocity => {
                 if (velocity.procedure)
@@ -86,7 +118,7 @@ describe('SolidController', () => {
     });
     
     it('should get all orientations', (done) => {
-        controller.findAllOrientations(session, 20).then(orientations => {
+        controller.findAllOrientations(session).then(orientations => {
             expect(orientations.length).to.be.greaterThanOrEqual(2);
             orientations.forEach(orientation => {
                 if (orientation.procedure)

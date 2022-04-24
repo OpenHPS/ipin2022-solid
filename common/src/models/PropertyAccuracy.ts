@@ -1,55 +1,55 @@
-import { SerializableMember, SerializableObject, Unit } from "@openhps/core";
-import { schema, ssn, ssns, rdfs } from "@openhps/rdf/vocab";
-import { SerializableNamedNode } from "@openhps/rdf/serialization";
-import { ObservableProperty } from "./ObservableProperty";
+import { SerializableMember, SerializableObject, Unit } from '@openhps/core';
+import { schema, ssn, ssns, rdfs } from '@openhps/rdf/vocab';
+import { SerializableNamedNode } from '@openhps/rdf/serialization';
+import { ObservableProperty } from './ObservableProperty';
 
 @SerializableObject({
     rdf: {
-        type: ssns.Accuracy
-    }
+        type: ssns.Accuracy,
+    },
 })
 export class PropertyAccuracy extends SerializableNamedNode {
     @SerializableMember({
         rdf: {
             predicate: rdfs.label,
-            language: "en"
-        }
+            language: 'en',
+        },
     })
     label?: string;
 
     @SerializableMember({
         rdf: {
             predicate: rdfs.comment,
-            language: "en"
-        }
+            language: 'en',
+        },
     })
     comment?: string;
 
     @SerializableMember({
         rdf: {
-            predicate: ssn.forProperty
-        }
+            predicate: ssn.forProperty,
+        },
     })
     forProperty: ObservableProperty;
 
     @SerializableMember({
         rdf: {
-            predicate: schema.minValue
-        }
+            predicate: schema.minValue,
+        },
     })
     minValue: number;
 
     @SerializableMember({
         rdf: {
-            predicate: schema.maxValue
-        }
+            predicate: schema.maxValue,
+        },
     })
     maxValue: number;
 
     @SerializableMember({
         rdf: {
-            predicate: schema.unitCode
-        }
+            predicate: schema.unitCode,
+        },
     })
     unit: Unit;
 }

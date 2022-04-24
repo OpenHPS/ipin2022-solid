@@ -1,58 +1,58 @@
-import { SerializableMember, SerializableObject } from "@openhps/core";
-import { rdfs, ssn, ogc, vcard } from "@openhps/rdf/vocab";
-import { PolygonGeometry } from "./PolygonGeometry";
-import { Platform } from "./Platform";
-import { Address } from "./Address";
-import { SerializableNamedNode } from "@openhps/rdf";
+import { SerializableMember, SerializableObject } from '@openhps/core';
+import { rdfs, ssn, ogc, vcard } from '@openhps/rdf/vocab';
+import { PolygonGeometry } from './PolygonGeometry';
+import { Platform } from './Platform';
+import { Address } from './Address';
+import { SerializableNamedNode } from '@openhps/rdf';
 
 @SerializableObject({
     rdf: {
-        type: [ssn.Deployment, ogc.SpatialObject]
-    }
+        type: [ssn.Deployment, ogc.SpatialObject],
+    },
 })
 export class Deployment extends SerializableNamedNode {
     @SerializableMember({
         rdf: {
             predicate: rdfs.label,
-            language: "en"
-        }
+            language: 'en',
+        },
     })
     label?: string;
 
     @SerializableMember({
         rdf: {
             predicate: rdfs.comment,
-            language: "en"
-        }
+            language: 'en',
+        },
     })
     comment?: string;
 
     @SerializableMember({
         rdf: {
             predicate: ssn.deployedOnPlatform,
-            language: "en"
-        }
+            language: 'en',
+        },
     })
     platform?: Platform;
 
     @SerializableMember({
         rdf: {
             predicate: ogc.hasGeometry,
-        }
+        },
     })
     geometry?: PolygonGeometry;
 
     @SerializableMember({
         rdf: {
             predicate: vcard.hasAddress,
-        }
+        },
     })
     address?: Address;
 
     @SerializableMember({
         rdf: {
-            predicate: ogc.sfWithin
-        }
+            predicate: ogc.sfWithin,
+        },
     })
     within?: Deployment;
 }

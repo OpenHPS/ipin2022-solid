@@ -1,5 +1,4 @@
-import { IriString } from "@openhps/rdf";
-import { PolygonGeometry } from "./PolygonGeometry";
+import { IriString } from '@openhps/rdf';
 
 export interface GeolocationPosition {
     heading?: number;

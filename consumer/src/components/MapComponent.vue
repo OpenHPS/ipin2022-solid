@@ -12,6 +12,15 @@
             :rotation.sync="rotation"/>
 
         <VlFeature
+            v-if="position && this.map"
+            id="position-accuracy-feature">
+            <VlGeomPolygon :coordinates="this.convertRadiusToGeometry(position.latlng, position.accuracy)" />
+            <VlStyle>
+                <VlStyleFill color="rgba(216, 232, 255, 0.4)" />
+                <VlStyleStroke color="rgba(216, 232, 255, 0.8)" />
+            </VlStyle>
+        </VlFeature>
+        <VlFeature
             v-if="position.deployment"
             id="position-deployment-feature">
             <VlGeomPolygon :coordinates="position.deployment.geometry" />
@@ -19,11 +28,6 @@
                 <VlStyleFill color="rgba(51, 204, 51, 0.5)" />
                 <VlStyleStroke color="rgba(51, 204, 51, 1)" />
             </VlStyle>
-        </VlFeature>
-        <VlFeature
-            v-if="position && this.map"
-            id="position-accuracy-feature">
-            <VlGeomPolygon :coordinates="this.convertRadiusToGeometry(position.latlng, position.accuracy)" />
         </VlFeature>
         <VlFeature
             v-if="position"

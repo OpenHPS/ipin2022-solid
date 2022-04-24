@@ -32,7 +32,7 @@
                     {{ props.row.datetime }}
                 </b-table-column>
                 <b-table-column width="250" field="position" label="Coordinates" v-slot="props">
-                    {{ props.row.latitude }}, {{ props.row.longitude }}
+                    <small>{{ props.row.latitude }}, {{ props.row.longitude }}</small>
                 </b-table-column>
                 <b-table-column field="altitude" label="Altitude" v-slot="props">
                     {{ props.row.altitude }}
@@ -43,7 +43,7 @@
                 <b-table-column field="system" label="System" v-slot="props">
                     <b-tooltip :label="props.row.system.comments"
                         type="is-primary is-light"
-                        position="is-bottom" dashed>
+                        position="is-left" dashed>
                         {{ props.row.system.label }}
                     </b-tooltip>
                 </b-table-column>
@@ -65,7 +65,7 @@
                 <b-table-column field="system" label="System" v-slot="props">
                     <b-tooltip :label="props.row.system.comments"
                         type="is-primary is-light"
-                        position="is-bottom" dashed>
+                        position="is-left" dashed>
                         {{ props.row.system.label }}
                     </b-tooltip>
                 </b-table-column>
@@ -87,7 +87,7 @@
                 <b-table-column field="system" label="System" v-slot="props">
                     <b-tooltip :label="props.row.system.comments"
                         type="is-primary is-light"
-                        position="is-bottom" dashed>
+                        position="is-left" dashed>
                         {{ props.row.system.label }}
                     </b-tooltip>
                 </b-table-column>
@@ -139,7 +139,7 @@ export default {
         this.loadVelocities();
     });
     this.controller.on('newPosition', () => {
-        console.log("New position! Refreshing ...");
+        this.$buefy.toast.open(`New position available! Updating ...)!`);
         this.loadPositions(true);
     });
     this.controller.on('newOrientation', () => {
@@ -152,7 +152,9 @@ export default {
   methods: {
     loadPositions(append = false) {
         this.loading.positions = !append && true;
-        this.controller.findAllPositions(this.controller.getSession(), undefined, append ? 1 : 50).then(positions => {
+        this.controller.findAllPositions(this.controller.getSession(), {
+            limit: append ? 1 : 50
+        }).then(positions => {
             this.loading.positions = !append && false;
             const results = positions
                 .map(position => ({
@@ -166,7 +168,6 @@ export default {
                 }));
             if (append && results.length > 0) {
                 this.observations.positions.unshift(...results);
-                this.$buefy.toast.open(`Position was updated (${results[0].datetime})!`);
             } else {
                 this.observations.positions = results;
             }
@@ -238,7 +239,7 @@ export default {
   width: 100%;
   height: 100%;
 }
-.loading-overlay.is-active {
+.loading-overlay.is-active, .table {
     min-height: 200px;
 }
 

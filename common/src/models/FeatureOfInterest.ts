@@ -1,34 +1,34 @@
-import { SerializableArrayMember, SerializableMember, SerializableObject } from "@openhps/core";
-import { rdfs, sosa, ssn } from "@openhps/rdf/vocab";
-import { ObservableProperty } from "./ObservableProperty";
-import { SerializableNamedNode } from "@openhps/rdf/serialization";
+import { SerializableArrayMember, SerializableMember, SerializableObject } from '@openhps/core';
+import { rdfs, sosa, ssn } from '@openhps/rdf/vocab';
+import { ObservableProperty } from './ObservableProperty';
+import { SerializableNamedNode } from '@openhps/rdf/serialization';
 
 @SerializableObject({
     rdf: {
-        type: sosa.FeatureOfInterest
-    }
+        type: sosa.FeatureOfInterest,
+    },
 })
-export class FeatureOfInterest extends SerializableNamedNode { 
+export class FeatureOfInterest extends SerializableNamedNode {
     @SerializableMember({
         rdf: {
             predicate: rdfs.label,
-            language: "en"
-        }
+            language: 'en',
+        },
     })
     label?: string;
 
     @SerializableMember({
         rdf: {
             predicate: rdfs.comment,
-            language: "en"
-        }
+            language: 'en',
+        },
     })
     comment?: string;
 
     @SerializableArrayMember(ObservableProperty, {
         rdf: {
-            predicate: ssn.hasProperty
-        }
+            predicate: ssn.hasProperty,
+        },
     })
     properties?: ObservableProperty[] = [];
 }
