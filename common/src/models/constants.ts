@@ -1,2 +1,2 @@
-const BASE_URI = "http://openhps.github.io/ipin2022-solid/tracking.ttl#";
+const BASE_URI = "http://purl.org/ipin2022-solid#";
 export { BASE_URI };
