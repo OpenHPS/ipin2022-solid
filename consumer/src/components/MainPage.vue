@@ -8,7 +8,8 @@
         style="margin: 10px;"
         type="is-info" 
         aria-close-label="Close message">
-        <span v-if="observations.positions[0]" id="latest-position">{{ observations.positions[0].latitude }}, {{ observations.positions[0].longitude }} {{ observations.positions[0].altitude ? `, ${observations.positions[0].altitude}` : ""}}</span>
+        <span id="latest-position">{{ observations.positions[0].latitude }}, {{ observations.positions[0].longitude }}</span>
+        <span v-if="observations.positions[0].altitude" id="latest-altitude"><i class="fa-solid fa-mountain-city"></i> {{ observations.positions[0].altitude }}</span>
         <span v-if="observations.orientations[0]" id="latest-orientation"><i class="fa fa-compass"></i> {{ observations.orientations[0].heading }}</span>
         <span v-if="observations.velocities[0]" id="latest-speed"><i class="fa fa-tachometer"></i> {{ observations.velocities[0].speed }}</span>
     </b-message>

@@ -3,6 +3,7 @@
     <MenuComponent :controller="controller" :title="title" />
     <b-button
       v-if="this.camera === 'off'"
+      :disabled="this.processing"
       id="scanBtn"
       size="is-large"
       icon-left="fa-solid fa-qrcode"
@@ -17,6 +18,7 @@
       @decode="this.onDecode">
     </QrcodeStream>
     <LoginModal :controller="controller" />
+    <b-loading :is-full-page="true" v-model="processing" :can-cancel="false"></b-loading>
   </div>
 </template>
 
@@ -43,7 +45,8 @@ export default {
       controller: null,
       buildingController: null,
       qr: undefined,
-      camera: 'off'
+      camera: 'off',
+      processing: false
     }
   },
   beforeMount() {
@@ -60,6 +63,7 @@ export default {
         this.qr = space.displayName;
         new Audio(beepOK).play(); // Beep sound for OK
         this.camera = 'off';
+        this.processing = true;
 
         // Check if check in or check out
         return Promise.all([space, this.controller.findAllPositions(
@@ -90,9 +94,11 @@ export default {
             uri: BASE_URI + space.uid
           }
         });
+        this.processing = false;
       }).catch(err => {
         console.error(err);
         this.qr = undefined;
+        this.processing = false;
         new Audio(beepERR).play(); // Beep sound for ERROR
       });
     },

@@ -20,10 +20,10 @@ jobs:
           npm install
           npm run build
           npm run generate
-      # - name: Testing 'common'
-      #   working-directory: ./common
-      #   run: |
-      #     npm run test
+      - name: Testing 'common'
+        working-directory: ./common
+        run: |
+          npm run test
       - name: Build 'components'
         working-directory: ./components
         run: |
