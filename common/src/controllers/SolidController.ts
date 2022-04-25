@@ -13,12 +13,12 @@ import {
     GeolocationPosition,
     BASE_URI,
 } from '../models';
-import { ProxyHandlerStatic } from '@comunica/actor-http-proxy';
 import { getLiteral } from '@inrupt/solid-client';
 import { LocalStorageDriver } from '@openhps/localstorage';
 import { EventEmitter } from 'events';
 import type { SolidSession } from '@openhps/solid';
 import { asGeoJSON } from '../utils/geof';
+import { DynamicProxyHandler } from '../utils/DynamicProxyHandler';
 
 const DEFAULT_OPTIONS: FindOptions = {
     limit: 20,
@@ -38,6 +38,8 @@ export class SolidController extends EventEmitter {
     protected orientationProperty: ObservableProperty;
     protected velocityProperty: ObservableProperty;
     protected driver: SolidDataDriver<DataObject>;
+    public name: string;
+    protected proxyHandler: DynamicProxyHandler;
 
     /**
      * Create a new Solid app
@@ -52,6 +54,13 @@ export class SolidController extends EventEmitter {
                 namespace: clientName.toLowerCase().replace(/\s/g, '_'),
             }),
             restorePreviousSession: true,
+        });
+        this.proxyHandler = new DynamicProxyHandler('https://proxy.linkeddatafragments.org/', (url) => {
+            return (
+                url.includes('://qudt.org') ||
+                url.includes('://purl.org/ipin2022-solid') ||
+                url.includes('://anonymous.4open.science')
+            );
         });
         this.driver = new SolidDataDriver(DataObject);
         this.service.emit('build');
@@ -134,12 +143,12 @@ export class SolidController extends EventEmitter {
         const card = await this.service.getThing(session, session.info.webId);
 
         // User description
-        const name = (getLiteral(card, vcard.fn) ?? getLiteral(card, foaf.name)).value;
+        this.name = (getLiteral(card, vcard.fn) ?? getLiteral(card, foaf.name)).value;
         this.me = new FeatureOfInterest(session.info.webId);
 
         // Properties of user
         this.positionProperty = new ObservableProperty(this.getPropertyURI(session, 'position'));
-        this.positionProperty.comment = `Geographical position of ${name}`;
+        this.positionProperty.comment = `Geographical position of ${this.name}`;
         this.positionProperty.label = 'Geographical Position';
         this.positionProperty.featureOfInterest = this.me.value as IriString;
         const positionPropertyAccuracy = new PropertyAccuracy(this.getPropertyURI(session, 'position') + '#accuracy');
@@ -151,12 +160,12 @@ export class SolidController extends EventEmitter {
         positionPropertyAccuracy.comment = 'The maximum accuracy for the geographical position';
 
         this.orientationProperty = new ObservableProperty(this.getPropertyURI(session, 'orientation'));
-        this.orientationProperty.comment = `Orientation of ${name}`;
+        this.orientationProperty.comment = `Orientation of ${this.name}`;
         this.orientationProperty.label = 'Orientation';
         this.orientationProperty.featureOfInterest = this.me.value as IriString;
 
         this.velocityProperty = new ObservableProperty(this.getPropertyURI(session, 'velocity'));
-        this.velocityProperty.comment = `Velocity of ${name}`;
+        this.velocityProperty.comment = `Velocity of ${this.name}`;
         this.velocityProperty.label = 'Velocity';
         this.velocityProperty.featureOfInterest = this.me.value as IriString;
 
@@ -171,9 +180,11 @@ export class SolidController extends EventEmitter {
             return;
         } else {
             const subjects = RDFSerializer.serializeToSubjects(this.me);
-            subjects.forEach((subject) => {
-                this.service.setThing(session, subject);
-            });
+            await Promise.all(
+                subjects.map((subject) => {
+                    return this.service.setThing(session, subject);
+                }),
+            );
             this.service.setThing(session, RDFSerializer.serializeToSubjects(positionPropertyAccuracy)[0]);
         }
         console.log('Created properties for', this.me.id);
@@ -227,7 +238,7 @@ export class SolidController extends EventEmitter {
             return;
         }
 
-        console.debug('Updating position', data);
+        console.info('Updating position', data);
 
         if (data.lnglat) this.createPosition(session, data);
         if (data.heading) this.createOrientation(session, data);
@@ -262,7 +273,7 @@ export class SolidController extends EventEmitter {
             `,
                     {
                         sources: [deploymentUri.replace('http:', 'https:')],
-                        httpProxyHandler: new ProxyHandlerStatic('https://proxy.linkeddatafragments.org/'),
+                        httpProxyHandler: this.proxyHandler,
                         extensionFunctions: {
                             'http://www.opengis.net/def/function/geosparql/asGeoJSON': asGeoJSON,
                         },
@@ -312,7 +323,7 @@ export class SolidController extends EventEmitter {
             `,
                     {
                         sources: [procedureUri.replace('http:', 'https:')],
-                        httpProxyHandler: new ProxyHandlerStatic('https://proxy.linkeddatafragments.org/'),
+                        httpProxyHandler: this.proxyHandler,
                     },
                 )
                 .then((bindings) => {
@@ -398,7 +409,7 @@ export class SolidController extends EventEmitter {
                     session,
                     {
                         sources: [source],
-                        httpProxyHandler: new ProxyHandlerStatic('https://proxy.linkeddatafragments.org/'),
+                        httpProxyHandler: this.proxyHandler,
                         extensionFunctions: {
                             'http://www.opengis.net/def/function/geosparql/asGeoJSON': asGeoJSON,
                         },
@@ -478,7 +489,7 @@ export class SolidController extends EventEmitter {
                     session,
                     {
                         sources: [source],
-                        httpProxyHandler: new ProxyHandlerStatic('https://proxy.linkeddatafragments.org/'),
+                        httpProxyHandler: this.proxyHandler,
                     },
                 )
                 .then((bindings) => {
@@ -544,7 +555,7 @@ export class SolidController extends EventEmitter {
                     session,
                     {
                         sources: [source],
-                        httpProxyHandler: new ProxyHandlerStatic('https://proxy.linkeddatafragments.org/'),
+                        httpProxyHandler: this.proxyHandler,
                     },
                 )
                 .then((bindings) => {

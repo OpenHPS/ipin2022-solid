@@ -16,7 +16,16 @@
       </VlLayerTile>
 
       <VlFeature
-        v-if="position"
+          v-if="position && this.map"
+          id="position-accuracy-feature">
+          <VlGeomPolygon :coordinates="this.convertRadiusToGeometry(position.lnglat, position.accuracy)" />
+          <VlStyle>
+              <VlStyleFill color="rgba(216, 232, 255, 0.4)" />
+              <VlStyleStroke color="rgba(216, 232, 255, 0.8)" />
+          </VlStyle>
+      </VlFeature>
+      <VlFeature
+        v-if="position.lnglat.length === 2"
         id="position-feature">
         <VlGeomPoint :coordinates="position.lnglat"/>
         <VlStyle>
@@ -36,6 +45,7 @@
 import { FullScreen } from 'ol/control';
 import { LoginModal, MenuComponent } from 'ipin2022-components';
 import { BASE_URI, SolidController } from 'ipin2022-common';
+import { circular } from 'ol/geom/Polygon';
 
 const PROCEDURE = BASE_URI + "geolocationapi";
 
@@ -48,9 +58,6 @@ export default {
       center: [0, 0],
       zoom: 2,
       rotation: 0,
-      trackingOptions: {
-        enableHighAccuracy: true
-      },
       position: {
         lnglat: [],
         altitude: null,
@@ -64,31 +71,26 @@ export default {
   },
   beforeMount() {
     this.controller = new SolidController(this.title);
-    this.controller.once('ready', () => {
-      this.controller.updatePosition({
-        lnglat: this.position.lnglat,
-        altitude: this.position.altitude,
-        accuracy: this.position.accuracy,
-        altitudeAccuracy: this.position.altitudeAccuracy,
-        heading: this.position.heading,
-        speed: this.position.speed,
-        procedure: {
-          uri: PROCEDURE
-        }
-      });
-    });
   },
   mounted() {
     this.controller.once('ready', () => {
+      console.log("Watching for position updates ...");
       navigator.geolocation.watchPosition(this.onUpdatePosition.bind(this), 
         console.error, 
         {
           enableHighAccuracy: true,
-          maximumAge: 5000
+          maximumAge: 5000,
         });
     });
   },
   methods: {
+    /**
+     * Convert a radius to a geometry
+     */
+    convertRadiusToGeometry(center, radius) {
+        const circle = circular(center, radius, 128);
+        return circle.getCoordinates();
+    },
     onMapCreated(vm) {
       this.map = vm;
       // Add visual controls to the map
@@ -98,6 +100,7 @@ export default {
     },
     onUpdatePosition(event) {
       // Extract information from event
+      const oldPosition = Object.assign({}, this.position);
       this.position.lnglat = [event.coords.longitude, event.coords.latitude];
       this.position.accuracy = event.coords.accuracy;
       this.position.altitude = event.coords.altitude;
@@ -105,21 +108,31 @@ export default {
       this.position.speed = event.coords.speed;
       this.position.heading = event.coords.heading;
 
+      if (!this.controller.isLoggedIn) {
+        // Not logged in
+        return;
+      }
+
+      if (JSON.stringify(oldPosition) === JSON.stringify(this.position)) {
+        // No change
+        return;
+      }
+
       // Update the map view
       this.center = this.position.lnglat;
       this.zoom = 16;
 
-      if (this.controller.isLoggedIn) {
-        this.controller.updatePosition({
-          lnglat: this.position.lnglat,
-          altitude: this.position.altitude,
-          accuracy: this.position.accuracy,
-          altitudeAccuracy: this.position.altitudeAccuracy,
-          procedure: {
-            uri: PROCEDURE
-          }
-        });
-      }
+      this.controller.updatePosition({
+        lnglat: this.position.lnglat,
+        altitude: this.position.altitude,
+        accuracy: this.position.accuracy,
+        altitudeAccuracy: this.position.altitudeAccuracy,
+        speed: this.position.speed,
+        heading: this.position.heading,
+        procedure: {
+          uri: PROCEDURE
+        }
+      });
     },
   },
 }

@@ -14,6 +14,7 @@
                 <section class="modal-card-body">
                     <b-field label="Solid Issuer">
                         <b-autocomplete
+                            @keydown.native.enter="login()"
                             type="url"
                             v-model="issuer"
                             :data="knownIssuers"

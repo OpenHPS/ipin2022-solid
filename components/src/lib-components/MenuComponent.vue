@@ -5,11 +5,14 @@
     :shadow="true"
   >
     <template #brand>
-      <b-navbar-item>
+      <b-navbar-item active>
         <h1>{{ title }}</h1>
       </b-navbar-item>
     </template>
     <template #start>
+      <b-navbar-item :href="webId">
+        {{ name }}
+      </b-navbar-item>
       <b-navbar-dropdown label="Applications">
         <b-navbar-item href="../consumer/">
           Consumer application
@@ -40,12 +43,16 @@ export default {
   props: ['controller', 'title'],
   data () {
     return {
-      isLoggedIn: false
+      isLoggedIn: false,
+      name: "",
+      webId: "#"
     };
   },
   mounted() {
     this.controller.once('ready', () => {
       this.isLoggedIn = true;
+      this.name = this.controller.name;
+      this.webId = this.controller.getSession().info.webId;
     });
   },
   methods: {

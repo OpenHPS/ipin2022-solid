@@ -14,7 +14,7 @@
         <VlFeature
             v-if="position && this.map"
             id="position-accuracy-feature">
-            <VlGeomPolygon :coordinates="this.convertRadiusToGeometry(position.latlng, position.accuracy)" />
+            <VlGeomPolygon :coordinates="this.convertRadiusToGeometry(position.lnglat, position.accuracy)" />
             <VlStyle>
                 <VlStyleFill color="rgba(216, 232, 255, 0.4)" />
                 <VlStyleStroke color="rgba(216, 232, 255, 0.8)" />
@@ -32,7 +32,7 @@
         <VlFeature
             v-if="position"
             id="position-feature">
-            <VlGeomPoint :coordinates="position.latlng"/>
+            <VlGeomPoint :coordinates="position.lnglat"/>
             <VlStyle>
                 <VlStyleIcon
                     src="../assets/marker.png"
@@ -62,7 +62,7 @@ export default {
     }
   },
   mounted() {
-      this.center = this.position.latlng;
+      this.center = this.position.lnglat;
       this.zoom = 20;
       return;
   },

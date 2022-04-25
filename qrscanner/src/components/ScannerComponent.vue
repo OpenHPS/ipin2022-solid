@@ -62,7 +62,7 @@ export default {
       this.buildingController.findByURI(event).then(space => {
         this.qr = space.displayName;
         new Audio(beepOK).play(); // Beep sound for OK
-        this.camera = 'off';
+        this.camera = window.location.href.indexOf("debug") !== -1 ? 'auto' : 'off';
         this.processing = true;
 
         // Check if check in or check out
