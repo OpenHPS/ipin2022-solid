@@ -159,8 +159,8 @@ export default {
             const results = positions
                 .map(position => ({
                     datetime: this.formatDate(new Date(position.timestamp)),
-                    longitude: this.formatDegrees(position.latlng[0], true),
-                    latitude: this.formatDegrees(position.latlng[1], false),
+                    longitude: this.formatDegrees(position.lnglat[0], true),
+                    latitude: this.formatDegrees(position.lnglat[1], false),
                     altitude: position.altitude ? this.formatNumber(position.altitude, 2) + " m" : "-",
                     accuracy: position.accuracy ? this.formatNumber(position.accuracy, 2) + " m" : "-",
                     system: position.procedure ? position.procedure : {},

@@ -5,7 +5,7 @@
     :shadow="true"
   >
     <template #brand>
-      <b-navbar-item active>
+      <b-navbar-item>
         <h1>{{ title }}</h1>
       </b-navbar-item>
     </template>

@@ -423,7 +423,7 @@ export class SolidController extends EventEmitter {
                                 const coordinates: Array<number> = geoJSON.coordinates;
                                 const altitude = coordinates.length === 3 ? coordinates[2] : undefined;
                                 return {
-                                    latlng: coordinates.splice(0, 2),
+                                    lnglat: coordinates.splice(0, 2),
                                     altitude,
                                     timestamp: Date.parse(binding.get('datetime').value),
                                     accuracy: binding.get('accuracy')
