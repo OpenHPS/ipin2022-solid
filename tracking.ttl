@@ -11,6 +11,7 @@
     rdfs:range "http://www.w3.org/ns/ssn/Deployment".
 <http://purl.org/ipin2022-solid#system_outdoor> a ssn:System;
     rdfs:label "Outdoor positioning system"@en;
+    rdfs:comment "An outdoor positioning system that makes use of the Geolocation API."@en;
     ssn:implements <http://purl.org/ipin2022-solid#geolocationapi>.
 <http://purl.org/ipin2022-solid#geolocationapi> a <http://www.w3.org/ns/sosa/Procedure>;
     rdfs:label "Geolocation API"@en;
@@ -171,7 +172,8 @@
 ];
     ogc:sfWithin <http://purl.org/ipin2022-solid#deployment_pl9_3>.
 <http://purl.org/ipin2022-solid#system_indoor> a ssn:System;
-    rdfs:label "Outdoor positioning system"@en;
+    rdfs:label "Indoor positioning system"@en;
+    rdfs:comment "An indoor positioning system that makes use of QR-code scanning to check-in and out of rooms."@en;
     ssn:implements <http://purl.org/ipin2022-solid#qrscanner_checkin>, <http://purl.org/ipin2022-solid#qrscanner_checkout>;
     ssn:hasDeployment <http://purl.org/ipin2022-solid#deployment_pl9>.
 <http://purl.org/ipin2022-solid#qrscanner_checkin> a <http://www.w3.org/ns/sosa/Procedure>;
