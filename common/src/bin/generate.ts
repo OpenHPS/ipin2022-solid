@@ -20,6 +20,7 @@ store.addQuads(RDFSerializer.serializeToQuads(inDeployment));
 // Geolocation API
 const system1 = new System(`${BASE_URI}system_outdoor`);
 system1.label = 'Outdoor positioning system';
+system1.comment = 'An outdoor positioning system that makes use of the Geolocation API.';
 store.addQuads(RDFSerializer.serializeToQuads(system1));
 const procedure1 = new Procedure(`${BASE_URI}geolocationapi`);
 procedure1.label = 'Geolocation API';
@@ -29,7 +30,8 @@ store.addQuads(RDFSerializer.serializeToQuads(system1));
 
 // QR-scanner
 const system2 = new System(`${BASE_URI}system_indoor`);
-system2.label = 'Outdoor positioning system';
+system2.label = 'Indoor positioning system';
+system2.comment = 'An indoor positioning system that makes use of QR-code scanning to check-in and out of rooms.';
 const procedure2 = new Procedure(`${BASE_URI}qrscanner_checkin`);
 procedure2.label = 'QR-scanner Check-in';
 procedure2.comment = 'The act of scanning a QR-code to check-in to a room or space.';
