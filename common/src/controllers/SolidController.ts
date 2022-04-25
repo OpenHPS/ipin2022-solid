@@ -165,7 +165,7 @@ export class SolidController extends EventEmitter {
         this.me.properties.push(this.velocityProperty);
 
         // Do not update if there are already properties added
-        if (card.predicates[ssn.hasProperty] || card === undefined) {
+        if (card === undefined || card.predicates[ssn.hasProperty]) {
             console.log('Properties already exist!', this.me.id);
             this.emit('ready');
             return;
