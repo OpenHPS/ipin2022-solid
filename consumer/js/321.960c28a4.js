@@ -1,2 +1,0 @@
-"use strict";(self["webpackChunkipin2022_consumer"]=self["webpackChunkipin2022_consumer"]||[]).push([[321],{83321:function(e,n,u){u.r(n),u.d(n,{default:function(){return s}});var c=u(3704);class s extends c.Z{decodeBlock(e){return e}}}}]);
-//# sourceMappingURL=321.960c28a4.js.map
