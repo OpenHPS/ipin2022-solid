@@ -6,6 +6,12 @@ import { IriString, RDFSerializer, Store, ssn, ogc } from '@openhps/rdf';
 import { BASE_URI, Spaces, Deployment, PolygonGeometry, System, Procedure, ObjectProperty } from '..';
 import { building } from '../models/Spaces';
 
+// GeoJSON FeatureCollection
+const collection = {
+    type: 'FeatureCollection',
+    features: [],
+};
+
 // Quad store
 const store = new Store();
 
@@ -66,6 +72,9 @@ Object.keys(Spaces).forEach((key) => {
     if (space.uid === building.uid) {
         system2.deployment = deployment;
     }
+
+    // Convert the space to GeoJSON
+    collection.features.push(space.toGeoJSON());
 });
 store.addQuads(RDFSerializer.serializeToQuads(system2));
 
@@ -76,4 +85,9 @@ RDFSerializer.stringify(store, {
     const file = path.join(__dirname, '../../dist/tracking.ttl');
     console.log(`File written to ${file}`);
     fs.writeFileSync(file, value);
+});
+
+// Store GeoJSON
+fs.writeFileSync(path.join(__dirname, '../../dist/spaces.geo.json'), JSON.stringify(collection, null, 2), {
+    encoding: 'utf-8',
 });

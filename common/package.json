@@ -15,8 +15,8 @@
     "lint": "eslint src/**"
   },
   "dependencies": {
-    "@openhps/core": "^0.3.27",
-    "@openhps/geospatial": "^0.1.7",
+    "@openhps/core": "^0.3.37",
+    "@openhps/geospatial": "^0.1.12",
     "@openhps/localstorage": "^0.2.2",
     "@openhps/rdf": "^0.1.28",
     "@openhps/solid": "0.1.0-alpha.28",
@@ -26,20 +26,20 @@
   "devDependencies": {
     "@types/chai": "^4.3.1",
     "@types/mocha": "^9.1.1",
-    "@typescript-eslint/eslint-plugin": "^5.20.0",
-    "@typescript-eslint/parser": "^5.20.0",
+    "@typescript-eslint/eslint-plugin": "^5.30.0",
+    "@typescript-eslint/parser": "^5.30.0",
     "chai": "^4.3.6",
-    "eslint": "^8.14.0",
+    "eslint": "^8.18.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-deprecation": "^1.3.2",
     "eslint-plugin-import": "^2.26.0",
-    "eslint-plugin-jsdoc": "^39.2.8",
-    "eslint-plugin-prettier": "^4.0.0",
-    "mocha": "^9.2.2",
+    "eslint-plugin-jsdoc": "^39.3.3",
+    "eslint-plugin-prettier": "^4.1.0",
+    "mocha": "^10.0.0",
     "npm-run-all": "^4.1.5",
-    "prettier": "^2.6.2",
-    "ts-node": "^10.7.0",
-    "typescript": "~4.6.3"
+    "prettier": "^2.7.1",
+    "ts-node": "^10.8.1",
+    "typescript": "~4.7.4"
   },
   "browserslist": [
     "> 1%",
