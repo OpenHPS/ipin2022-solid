@@ -62,7 +62,8 @@ jobs:
           cp -r ./geolocationapi/dist/. ./_site/geolocationapi/
           cp -r ./consumer/dist/. ./_site/consumer/
           cp ./common/dist/tracking.ttl ./_site/tracking.ttl
-          touch ./_site/index.html
+          
+          cp -r ./docs/pages/landing/ ./_site/
 
           cp README.md ./_site/README.md
       - name: Deploy site to GitHub
