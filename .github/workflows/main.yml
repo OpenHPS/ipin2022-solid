@@ -63,7 +63,7 @@ jobs:
           cp -r ./consumer/dist/. ./_site/consumer/
           cp ./common/dist/tracking.ttl ./_site/tracking.ttl
           
-          cp -r ./docs/pages/landing/ ./_site/
+          cp -r ./docs/pages/landing/. ./_site/
 
           cp README.md ./_site/README.md
       - name: Deploy site to GitHub
